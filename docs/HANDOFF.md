@@ -10,11 +10,20 @@ Don't read `docs/FRONTEND_BLUEPRINT.md` unless a task needs it.
 ## Where things stand
 - Backend Phases 0–3 done: auth, users, customers, catalog, plans, templates, subscriptions +
   state machine + preview, discounts, billing engine, invoices, payments, reports, big seed,
-  invoice print/PDF/email. **97 tests pass (across 10 test files), build clean.** Backend feature work is **STOPPED**.
+  invoice print/PDF/email. **97 tests pass (across 10 test files), build clean.** Backend feature work is **FROZEN / COMPLETED**.
 - Stack: Node 20 + TS + Express + Prisma 6 + PostgreSQL 16 (docker-compose: dev 5432, test 5433),
   Zod 4, decimal.js, Vitest + Supertest against a real test DB.
-- Dev DB currently holds the small seed (`npm run db:seed`); `npm run db:seed:big` generates the big seed (5,000 subs; Acme demo sub = SUB-004991; ~115 subs due today, ~218 s). Both wipe the dev DB.
-- API samples done: 75 sample JSON responses generated against the live seed in `docs/api-samples/` (covering all `API_CONTRACT.md` endpoints plus 400 validation with fields, 401, 403, 404, 409, 429 RATE_LIMITED, INVALID_TRANSITION, BUSINESS_RULE, refresh retry). All `accessToken` values are redacted to `"<redacted-jwt>"`. See `docs/api-samples/README.md`.
+- CI: GitHub Actions workflow (`.github/workflows/server-ci.yml`) runs on push and PR to main using a PostgreSQL 16 service container (`Asia/Kolkata`, `NODE_ENV=test`, `PUPPETEER_SKIP_DOWNLOAD=true`). Passing green with CI badge in `README.md`.
+- Dev DB holds the BIG seed (`npm run demo:reset` or `npm run db:seed:big`): 500 customers, 5,000 subscriptions, 6 months of historical billing (~27,700 invoices), Acme demo sub `SUB-004991`, ~115 subscriptions due today. Small seed available via `npm run db:seed`.
+- Demo Scripts:
+  - `npm run demo:reset`: wipes dev DB, runs big seed, and displays the demo cheat-sheet (logins, Acme SUB number, count of subscriptions due today, expected Acme invoice total ₹8,283.60).
+  - `npm run demo:check`: pre-demo health check against running server verifying `/health`, all 4 logins, `/reports/summary` response time, due subscriptions count, Puppeteer, and SMTP.
+- Documentation:
+  - `README.md`: rewritten as project front page with architecture, stack, demo logins, how billing works, performance numbers, test proofs, and docs index.
+  - `docs/DEMO.md`: complete demo runbook with pre-demo checklist, 9-step script from frontend blueprint section 11, and contingency guide.
+  - `docs/BILLING_EXPLAINED.md`: line-by-line walkthrough of `engine.ts`, answers to 10 architecture defense questions, and accepted system limitations.
+  - `docs/API_CONTRACT.md`: aligned contract for 38 endpoints.
+  - `docs/api-samples/`: 75 live JSON response samples with `<redacted-jwt>` tokens.
 
 ## Decisions made in review that go BEYOND the blueprint (keep them; don't "fix" back)
 - **Billing anchor:** migration 0003 adds `subscriptions.billing_anchor`. Set on activate, shifted
@@ -56,9 +65,15 @@ Don't read `docs/FRONTEND_BLUEPRINT.md` unless a task needs it.
    - Redacted all `accessToken` JWTs in samples to `"<redacted-jwt>"`.
    - Enforced production secret rules in `config/env.ts` (>= 32 chars, no 'change-me') with verified tests.
    - Updated `POST /invoices/:id/payments` response shape to include `recordedBy: { id, name }`.
+4. Final completion pass:
+   - CI: Added `.github/workflows/server-ci.yml` running on Node 20 + PostgreSQL 16 container; CI badge in `README.md`.
+   - Demo commands: Added `npm run demo:reset` and `npm run demo:check` scripts.
+   - Comprehensive `README.md` rewritten with architecture, stack, performance, test proofs, and docs index.
+   - Created `docs/DEMO.md` presentation runbook with checklist, 9-step script, and contingency guide.
+   - Created `docs/BILLING_EXPLAINED.md` walking through `engine.ts` and answering 10 architecture defense questions.
+   - Verified zero-migration deployment and full test pass on fresh database.
 
 ## Open items (don't act on them unless I ask)
 - Mailtrap SMTP credentials not yet in `server/.env` (I'll add them).
 - Puppeteer Chrome must be installed on the demo laptop (`npx puppeteer browsers install chrome`).
 - The frontend merge happens later; the `api-samples` are for my teammate to replace their mocks.
-- Optional later: GitHub Actions CI running tests against Postgres.
