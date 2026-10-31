@@ -72,7 +72,7 @@ and update this file in the same commit as the code (and MSW mock) change.
 | POST | /invoices/:id/send | Admin, Staff | CONFIRMED or PAID only (else 400 BUSINESS_RULE). Emails the bill-to address with the PDF attached (if no PDF can be made: the invoice as HTML plus a portal link); sets sentAt → invoice detail + pdfAttached: boolean |
 | GET | /invoices/:id/pdf | Scoped | application/pdf (A4). Chrome unavailable → 503 PDF_UNAVAILABLE: use /print |
 | GET | /invoices/:id/print | Scoped | text/html: the same invoice page with print CSS; browser "Save as PDF" works without the server's Chrome |
-| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment record: { id, invoiceId, method, amount, paidOn, reference, note, recordedBy: "userId", createdAt }. paidOn after today (India date) → 400 VALIDATION_ERROR on paidOn. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS_RULE); the invoice becomes PAID when fully paid |
+| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment record: { id, invoiceId, method, amount, paidOn, reference, note, recordedBy: { id, name }, createdAt }. paidOn after today (India date) → 400 VALIDATION_ERROR on paidOn. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS_RULE); the invoice becomes PAID when fully paid |
 | GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= (from/to filter paidOn) → { data: [{ id, invoiceId, invoiceNumber, method, amount, paidOn, reference, note, createdAt, recordedBy: { id, name } }], page, pageSize, total }; recordedBy is omitted for customers |
 | POST | /billing/run | Admin | { date? } (default today, India date; a future date → 400) → { invoicesCreated, closed, errors: [{ subscriptionId, message }] } |
 | GET | /billing/runs | Admin | Paginated, newest first: { data: [{ id, runDate, startedAt, finishedAt, invoicesCreated, subscriptionsClosed, errors, triggeredBy: { id, name } \| null }], page, pageSize, total }; triggeredBy null = scheduler |
@@ -168,7 +168,7 @@ and update this file in the same commit as the code (and MSW mock) change.
 
 // POST /invoices/:id/payments (201 created payment)
 { "id": "9", "invoiceId": "501", "method": "UPI", "amount": "5000.00", "paidOn": "2026-11-05",
-  "reference": "UTR123", "note": "", "recordedBy": "2", "createdAt": "2026-11-05T10:00:00.000Z" }
+  "reference": "UTR123", "note": "", "recordedBy": { "id": "2", "name": "Karan Mehta" }, "createdAt": "2026-11-05T10:00:00.000Z" }
 
 // GET /payments (list item inside { data: [ ... ], page, pageSize, total })
 { "id": "9", "invoiceId": "501", "invoiceNumber": "INV-000501", "method": "UPI", "amount": "5000.00",

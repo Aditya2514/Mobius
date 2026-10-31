@@ -1,5 +1,5 @@
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTM0MzczODYsImV4cCI6MTc5MzQzODI4Niwic3ViIjoiMSJ9.LGDS0BFLC7m4TwSB3WLukYqZ2YArOlTW3mlK3BGidbo",
+  "accessToken": "<redacted-jwt>",
   "user": {
     "id": "1",
     "email": "admin@brightloop.test",
@@ -10,6 +10,6 @@
     "address": null,
     "gstin": null,
     "isActive": true,
-    "createdAt": "2026-10-31T09:02:59.962Z"
+    "createdAt": "2026-10-31T09:19:43.765Z"
   }
 }

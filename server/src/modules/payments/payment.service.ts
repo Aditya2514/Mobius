@@ -23,10 +23,20 @@ export async function recordPayment(invoiceId: bigint, body: RecordPaymentBody, 
     if (amount.lte(0) || amount.gt(balance))
       throw new AppError(400, 'BUSINESS_RULE', `Amount must be between 0.01 and ${balance.toFixed(2)}`, { field: 'amount' });
 
-    const payment = await tx.payments.create({ data: {
-      invoice_id: invoiceId, method: body.method, amount: amount.toString(),
-      paid_on: fromISODate(body.paidOn), reference: body.reference ?? null,
-      note: body.note ?? null, recorded_by: BigInt(user.id) } });
+    const payment = await tx.payments.create({
+      data: {
+        invoice_id: invoiceId,
+        method: body.method,
+        amount: amount.toString(),
+        paid_on: fromISODate(body.paidOn),
+        reference: body.reference ?? null,
+        note: body.note ?? null,
+        recorded_by: BigInt(user.id),
+      },
+      include: {
+        users: { select: { id: true, full_name: true } },
+      },
+    });
 
     const paid = new Decimal(inv.amount_paid.toString()).plus(amount);
     const fullyPaid = paid.gte(inv.total.toString());
@@ -34,7 +44,17 @@ export async function recordPayment(invoiceId: bigint, body: RecordPaymentBody, 
       UPDATE invoices SET amount_paid = ${paid.toString()}::numeric
         ${fullyPaid ? Prisma.sql`, status = 'PAID', paid_at = now()` : Prisma.empty}
       WHERE id = ${invoiceId}`;
-    return payment;
+    return {
+      id: payment.id,
+      invoice_id: payment.invoice_id,
+      method: payment.method,
+      amount: payment.amount,
+      paid_on: payment.paid_on,
+      reference: payment.reference,
+      note: payment.note,
+      created_at: payment.created_at,
+      recorded_by: { id: payment.users.id, name: payment.users.full_name },
+    };
   });
 }
 

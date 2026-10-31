@@ -4,7 +4,7 @@
   "validityDays": 45,
   "paymentTermsDays": 15,
   "notes": "Updated validity to 45 days",
-  "createdAt": "2026-10-31T09:03:07.063Z",
+  "createdAt": "2026-10-31T09:19:56.626Z",
   "plan": {
     "id": "3",
     "name": "CRM Monthly",

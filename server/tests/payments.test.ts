@@ -63,7 +63,12 @@ describe('recording payments (section 7)', () => {
 
     const first = await pay(inv.id, '5000', 'UPI');
     expect(first.status).toBe(201);
-    expect(first.body).toMatchObject({ method: 'UPI', amount: '5000.00', paidOn: '2026-10-05' });
+    expect(first.body).toMatchObject({
+      method: 'UPI',
+      amount: '5000.00',
+      paidOn: '2026-10-05',
+      recordedBy: { id: c.staffUser.id.toString(), name: c.staffUser.full_name },
+    });
     expect((await invoice(inv.id)).body).toMatchObject({ status: 'CONFIRMED', amountPaid: '5000.00', balanceDue: '3283.60' });
 
     expect((await pay(inv.id, '3283.60', 'BANK_TRANSFER')).status).toBe(201);

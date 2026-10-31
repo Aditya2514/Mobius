@@ -23,6 +23,20 @@ function rtCookie(res: request.Response): string {
 
 const samples: { method: string; path: string; role: string; file: string; status: number; note?: string }[] = [];
 
+function redactTokens(obj: unknown): unknown {
+  if (typeof obj !== 'object' || obj === null) return obj;
+  if (Array.isArray(obj)) return obj.map(redactTokens);
+  const result: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (key === 'accessToken') {
+      result[key] = '<redacted-jwt>';
+    } else {
+      result[key] = redactTokens(val);
+    }
+  }
+  return result;
+}
+
 function saveSample(
   file: string,
   method: string,
@@ -41,6 +55,7 @@ function saveSample(
   } else {
     content = res.body;
   }
+  content = redactTokens(content);
   writeFileSync(filePath, JSON.stringify(content, null, 2) + '\n', 'utf8');
   samples.push({ method, path, role, file, status: res.status, note });
   console.log(`Saved ${file} (${method} ${path} -> ${res.status})`);
@@ -665,11 +680,11 @@ async function main() {
 }
 
 main()
-  .then(() => {
-    process.exit(0);
-  })
   .catch((e) => {
     console.error('Error generating samples:', e);
-    process.exit(1);
+    process.exitCode = 1;
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+    process.exit(process.exitCode ?? 0);
+  });

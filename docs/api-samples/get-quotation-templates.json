@@ -6,7 +6,7 @@
       "validityDays": 30,
       "paymentTermsDays": 15,
       "notes": "Standard 5-seat CRM offer. Seats 10% applies automatically at 5 seats or more.",
-      "createdAt": "2026-10-31T09:02:59.995Z",
+      "createdAt": "2026-10-31T09:19:43.796Z",
       "plan": {
         "id": "3",
         "name": "CRM Monthly",
@@ -21,7 +21,7 @@
       "validityDays": 15,
       "paymentTermsDays": 30,
       "notes": null,
-      "createdAt": "2026-10-31T09:02:59.999Z",
+      "createdAt": "2026-10-31T09:19:43.798Z",
       "plan": {
         "id": "4",
         "name": "CRM Yearly",

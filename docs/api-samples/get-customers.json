@@ -10,7 +10,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:05.646Z"
+      "createdAt": "2026-10-31T09:19:55.086Z"
     },
     {
       "id": "12",
@@ -22,7 +22,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.014Z"
+      "createdAt": "2026-10-31T09:19:43.808Z"
     },
     {
       "id": "11",
@@ -34,7 +34,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.013Z"
+      "createdAt": "2026-10-31T09:19:43.807Z"
     },
     {
       "id": "10",
@@ -46,7 +46,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.012Z"
+      "createdAt": "2026-10-31T09:19:43.806Z"
     },
     {
       "id": "9",
@@ -58,7 +58,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.010Z"
+      "createdAt": "2026-10-31T09:19:43.804Z"
     },
     {
       "id": "8",
@@ -70,7 +70,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.008Z"
+      "createdAt": "2026-10-31T09:19:43.803Z"
     },
     {
       "id": "7",
@@ -82,7 +82,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.007Z"
+      "createdAt": "2026-10-31T09:19:43.802Z"
     },
     {
       "id": "6",
@@ -94,7 +94,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.005Z"
+      "createdAt": "2026-10-31T09:19:43.801Z"
     },
     {
       "id": "5",
@@ -106,7 +106,7 @@
       "address": null,
       "gstin": null,
       "isActive": true,
-      "createdAt": "2026-10-31T09:03:00.003Z"
+      "createdAt": "2026-10-31T09:19:43.800Z"
     },
     {
       "id": "4",
@@ -118,7 +118,7 @@
       "address": "Unit 12, Hiranandani Business Park, Powai, Mumbai 400076",
       "gstin": "27AAGFG5678K1Z2",
       "isActive": true,
-      "createdAt": "2026-10-31T09:02:59.970Z"
+      "createdAt": "2026-10-31T09:19:43.775Z"
     },
     {
       "id": "3",
@@ -130,7 +130,7 @@
       "address": "4th Floor, Prestige Tower, MG Road, Bengaluru 560001",
       "gstin": "29AABCA1234F1Z5",
       "isActive": true,
-      "createdAt": "2026-10-31T09:02:59.968Z"
+      "createdAt": "2026-10-31T09:19:43.774Z"
     }
   ],
   "page": 1,
