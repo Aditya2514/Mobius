@@ -128,11 +128,13 @@ export default function AppLayout() {
                   borderRadius: 2,
                   py: 1,
                   px: 2,
+                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.06)' },
                   '&.Mui-selected': {
-                    backgroundColor: 'primary.main',
+                    backgroundColor: 'rgba(167,139,250,0.18)',
                     color: '#ffffff',
+                    boxShadow: 'inset 0 0 0 1px rgba(192,132,252,0.35), 0 0 18px rgba(168,85,247,0.15)',
                     '&:hover': {
-                      backgroundColor: 'primary.dark',
+                      backgroundColor: 'rgba(167,139,250,0.26)',
                     },
                     '& .MuiListItemIcon-root': {
                       color: '#ffffff',
@@ -175,7 +177,9 @@ export default function AppLayout() {
             width: 38,
             height: 38,
             borderRadius: 2,
-            backgroundColor: 'primary.main',
+            background: 'linear-gradient(135deg, rgba(147,51,234,0.55), rgba(236,72,153,0.35))',
+            border: '1px solid rgba(192,132,252,0.4)',
+            boxShadow: '0 0 15px rgba(168,85,247,0.3)',
             color: '#ffffff',
           }}
         >
@@ -225,7 +229,7 @@ export default function AppLayout() {
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: 'background.default' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: 'transparent' }}>
       {/* Top App Bar */}
       <AppBar
         position="fixed"
@@ -233,8 +237,9 @@ export default function AppLayout() {
         sx={{
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
           ml: { md: `${DRAWER_WIDTH}px` },
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #e2e8f0',
+          backgroundColor: 'rgba(8,8,14,0.6)',
+          backdropFilter: 'blur(18px)',
+          borderBottom: '1px solid rgba(255,255,255,0.10)',
           color: 'text.primary',
         }}
       >
@@ -321,7 +326,9 @@ export default function AppLayout() {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: DRAWER_WIDTH,
-              borderRight: '1px solid #e2e8f0',
+              borderRight: '1px solid rgba(255,255,255,0.10)',
+              backgroundColor: 'rgba(8,8,14,0.65)',
+              backdropFilter: 'blur(18px)',
             },
           }}
           open

@@ -38,8 +38,8 @@ export default function DataTable({
       autoHeight
       rowHeight={60}
       sx={{
-        backgroundColor: '#ffffff',
-        border: '1px solid #e2e8f0',
+        backgroundColor: 'rgba(12,12,20,0.72)',
+        border: '1px solid rgba(255,255,255,0.10)',
         borderRadius: 2,
         // vertically centre every cell, so one-line cells line up with two-line ones
         '& .MuiDataGrid-cell': {

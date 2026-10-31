@@ -60,7 +60,7 @@ export default function RecordPaymentDialog({ open, onClose, invoice }) {
           Record Payment for {invoice.number}
         </DialogTitle>
         <DialogContent>
-          <Box sx={{ mb: 2.5, p: 2, bgcolor: '#f8fafc', borderRadius: 2 }}>
+          <Box sx={{ mb: 2.5, p: 2, bgcolor: 'rgba(255,255,255,0.04)', borderRadius: 2 }}>
             <Typography variant="body2" color="text.secondary">
               Total Outstanding Balance:
             </Typography>

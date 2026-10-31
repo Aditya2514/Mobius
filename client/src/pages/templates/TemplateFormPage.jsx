@@ -311,7 +311,7 @@ export default function TemplateFormPage() {
 
               {/* Lines Table */}
               <Table size="small">
-                <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 600 }}>Product</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 600 }}>
