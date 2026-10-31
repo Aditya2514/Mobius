@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Card,
@@ -9,8 +9,9 @@ import {
   Grid,
   MenuItem,
   CircularProgress,
+  Autocomplete,
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -23,14 +24,24 @@ export default function SubscriptionCreatePage() {
   const { enqueueSnackbar } = useSnackbar();
   const qc = useQueryClient();
 
-  const { data: customers } = useQuery({
-    queryKey: ['customers', { pageSize: 100 }],
-    queryFn: () => api.get('/customers', { params: { pageSize: 100 } }).then((r) => r.data),
+  // Customer picker: search on the server (there can be thousands of customers)
+  const [customerInput, setCustomerInput] = useState('');
+  const [customerQ, setCustomerQ] = useState('');
+  useEffect(() => {
+    const t = setTimeout(() => setCustomerQ(customerInput.trim()), 300);
+    return () => clearTimeout(t);
+  }, [customerInput]);
+
+  const { data: customers, isFetching: customersLoading } = useQuery({
+    queryKey: ['customers', { q: customerQ, pageSize: 25, active: 'true' }],
+    queryFn: () =>
+      api.get('/customers', { params: { q: customerQ, pageSize: 25, active: 'true' } }).then((r) => r.data),
+    keepPreviousData: true,
   });
 
   const { data: plans } = useQuery({
     queryKey: ['plans', { available: 'true' }],
-    queryFn: () => api.get('/plans', { params: { available: 'true' } }).then((r) => r.data),
+    queryFn: () => api.get('/plans', { params: { available: 'true', pageSize: 100 } }).then((r) => r.data),
   });
 
   const { data: templates } = useQuery({
@@ -40,6 +51,7 @@ export default function SubscriptionCreatePage() {
 
   const {
     register,
+    control,
     handleSubmit,
     setValue,
     watch,
@@ -140,22 +152,34 @@ export default function SubscriptionCreatePage() {
 
             {/* Customer Account */}
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                select
-                label="Customer Account *"
-                size="small"
-                defaultValue=""
-                {...register('customerId', { required: 'Customer is required' })}
-                error={Boolean(errors.customerId)}
-                helperText={errors.customerId?.message}
-              >
-                {(customers?.data || []).map((c) => (
-                  <MenuItem key={c.id} value={c.id}>
-                    {c.fullName} {c.companyName ? `(${c.companyName})` : ''}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Controller
+                name="customerId"
+                control={control}
+                rules={{ required: 'Customer is required' }}
+                render={({ field, fieldState }) => (
+                  <Autocomplete
+                    size="small"
+                    options={customers?.data || []}
+                    loading={customersLoading}
+                    filterOptions={(x) => x}
+                    getOptionLabel={(c) =>
+                      `${c.fullName}${c.companyName ? ` (${c.companyName})` : ''} — ${c.email}`
+                    }
+                    isOptionEqualToValue={(o, v) => o.id === v.id}
+                    onInputChange={(_e, v, reason) => reason === 'input' && setCustomerInput(v)}
+                    onChange={(_e, c) => field.onChange(c ? c.id : '')}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Customer Account *"
+                        placeholder="Search by name, company or email"
+                        error={Boolean(fieldState.error)}
+                        helperText={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                )}
+              />
             </Grid>
 
             {/* Recurring Plan */}
