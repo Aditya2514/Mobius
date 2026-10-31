@@ -28,7 +28,8 @@ export async function refresh(req: Request, res: Response) {
   try {
     sendSession(res, await svc.refresh(req.cookies?.[RT_COOKIE]));
   } catch (e) {
-    res.clearCookie(RT_COOKIE, rtCookieOptions);
+    // clear the cookie on real failures only; on a retry the browser already holds the other tab's new token
+    if (!svc.isRetryableRefresh(e)) res.clearCookie(RT_COOKIE, rtCookieOptions);
     throw e;
   }
 }

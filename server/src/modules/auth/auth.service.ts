@@ -78,13 +78,22 @@ async function issueSession(userId: bigint, role: Role, tx: Prisma.TransactionCl
 
 const sessionExpired = () => new AppError(401, 'UNAUTHENTICATED', 'Session expired, please log in again');
 
+/** Two tabs refreshed with the same token and the other tab won. Its response carried the new cookie,
+ *  so the client should retry once instead of logging out, and the cookie must not be cleared. */
+const retryRefresh = () =>
+  new AppError(401, 'UNAUTHENTICATED', 'Session was just refreshed in another tab, retry', { retry: true });
+
+/** True when this refresh failure must leave the rt cookie alone. */
+export const isRetryableRefresh = (e: unknown) =>
+  e instanceof AppError && (e.details as { retry?: boolean } | undefined)?.retry === true;
+
 /** A revoked token presented again within this window is treated as two tabs refreshing at once, not theft. */
 export const REUSE_GRACE_MS = 30_000;
 
 /**
  * Rotate: the presented refresh token is revoked and a new pair issued.
  * Reuse of a token revoked more than 30 s ago ends every session of that user (likely stolen);
- * reuse within 30 s (two tabs refreshing together) just gets a 401.
+ * reuse within 30 s (two tabs refreshing together) gets 401 with details.retry and keeps the cookie.
  */
 export async function refresh(rawToken: string | undefined): Promise<Session> {
   if (!rawToken) throw sessionExpired();
@@ -102,7 +111,7 @@ export async function refresh(rawToken: string | undefined): Promise<Session> {
     if (claimed.count === 0) {
       // null here means a concurrent request revoked it between our read and our claim: that's "just now"
       const revokedAt = row.revoked_at ?? new Date();
-      if (Date.now() - revokedAt.getTime() <= REUSE_GRACE_MS) return { error: sessionExpired() };
+      if (Date.now() - revokedAt.getTime() <= REUSE_GRACE_MS) return { error: retryRefresh() };
 
       // revoked a while ago and presented again = likely stolen: end every session of this user
       await tx.refresh_tokens.updateMany({

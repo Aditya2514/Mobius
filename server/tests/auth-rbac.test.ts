@@ -147,14 +147,47 @@ describe('refresh tokens', () => {
     return { first, second };
   }
 
-  it('reuse within 30 s (two tabs refreshing at once) → 401, other sessions keep working', async () => {
+  /** Set-Cookie headers that touch rt (a clear is "rt=; ... Expires=Thu, 01 Jan 1970 ...") */
+  const rtSetCookies = (res: request.Response) =>
+    ([] as string[]).concat(res.headers['set-cookie'] ?? []).filter((c) => c.startsWith('rt='));
+
+  it('reuse within 30 s (two tabs refreshing at once) → 401 retry, cookie kept, sessions intact', async () => {
     const { first, second } = await loginAndRotate('tabs@acme.test');
 
     const reuse = await request(app).post(`${api}/auth/refresh`).set('Cookie', first);
     expect(reuse.status).toBe(401);
+    expect(reuse.body.error).toMatchObject({ code: 'UNAUTHENTICATED', details: { retry: true } });
+    expect(rtSetCookies(reuse)).toEqual([]); // must not tell the browser to delete its cookie
     // the newest token was not revoked
     const next = await request(app).post(`${api}/auth/refresh`).set('Cookie', second);
     expect(next.status).toBe(200);
+  });
+
+  it('two tabs sharing one browser cookie stay logged in', async () => {
+    // a browser has ONE rt cookie shared by all tabs; model it as a single jar
+    let jar = '';
+    const apply = (res: request.Response) => {
+      for (const c of rtSetCookies(res)) {
+        const value = c.split(';')[0];
+        jar = value === 'rt=' ? '' : value; // "rt=" with an old expiry is a delete
+      }
+    };
+    await makeCustomer({ email: 'jar@acme.test' });
+    apply(await request(app).post(`${api}/auth/login`).send({ email: 'jar@acme.test', password: PASSWORD }));
+    const stale = jar;
+
+    // tab A wins the refresh, the jar now holds the new token...
+    apply(await request(app).post(`${api}/auth/refresh`).set('Cookie', stale));
+    expect(jar).not.toBe(stale);
+    // ...tab B's request left with the old token and its 401 lands afterwards
+    const tabB = await request(app).post(`${api}/auth/refresh`).set('Cookie', stale);
+    apply(tabB);
+    expect(tabB.status).toBe(401);
+    expect(tabB.body.error.details.retry).toBe(true);
+
+    // tab B retries with whatever the jar now holds, as the frontend does
+    const retry = await request(app).post(`${api}/auth/refresh`).set('Cookie', jar);
+    expect(retry.status).toBe(200);
   });
 
   it('reuse more than 30 s after revocation (likely stolen) → 401 and every session revoked', async () => {
@@ -170,6 +203,8 @@ describe('refresh tokens', () => {
 
     const reuse = await request(app).post(`${api}/auth/refresh`).set('Cookie', first);
     expect(reuse.status).toBe(401);
+    expect(reuse.body.error.details?.retry).toBeUndefined();
+    expect(rtSetCookies(reuse)[0]).toMatch(/^rt=;/); // real failure: cookie cleared
     expect((await request(app).post(`${api}/auth/refresh`).set('Cookie', second)).status).toBe(401);
     expect((await request(app).post(`${api}/auth/refresh`).set('Cookie', other)).status).toBe(401);
     expect(await prisma.refresh_tokens.count({ where: { user_id: user.id, revoked_at: null } })).toBe(0);

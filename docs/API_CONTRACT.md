@@ -35,7 +35,7 @@ and update this file in the same commit as the code (and MSW mock) change.
 | --- | --- | --- | --- |
 | POST | /auth/signup | Public | { email, password, fullName, companyName? } → 201 customer |
 | POST | /auth/login | Public | { email, password } → { accessToken, user } + rt cookie |
-| POST | /auth/refresh | Cookie | → { accessToken, user }; rotates cookie |
+| POST | /auth/refresh | Cookie | → { accessToken, user }; rotates cookie. 401 with details.retry = true means another tab just refreshed: the cookie was kept, retry once after ~300 ms. Any other 401 clears the cookie: log out |
 | POST | /auth/logout | Any | Revokes refresh token → 204 |
 | POST | /auth/forgot-password | Public | { email } → always 200 { message } |
 | POST | /auth/reset-password | Public | { token, newPassword } → 200 { message }; bad or used token → 400 BUSINESS\_RULE |
