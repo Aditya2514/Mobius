@@ -33,7 +33,7 @@ export default function TaxesPage() {
 
   const { data: taxes, isLoading } = useQuery({
     queryKey: ['taxes'],
-    queryFn: () => api.get('/taxes').then((r) => r.data),
+    queryFn: () => api.get('/taxes', { params: { pageSize: 100 } }).then((r) => r.data.data),
   });
 
   const {

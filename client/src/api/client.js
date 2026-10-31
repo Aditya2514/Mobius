@@ -17,6 +17,12 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((cfg) => {
+  // never send empty filters (?status=): the API rejects empty enum values
+  if (cfg.params && typeof cfg.params === 'object') {
+    cfg.params = Object.fromEntries(
+      Object.entries(cfg.params).filter(([, v]) => v !== '' && v !== undefined && v !== null)
+    );
+  }
   if (accessToken) {
     cfg.headers.Authorization = `Bearer ${accessToken}`;
   }

@@ -36,6 +36,7 @@ import MyInvoicesPage from './pages/portal/MyInvoicesPage';
 import MyInvoiceDetailPage from './pages/portal/MyInvoiceDetailPage';
 import ProfilePage from './pages/portal/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
+import RouteError from './components/RouteError';
 
 function RootRedirect() {
   const { user, loading } = useAuth();
@@ -48,6 +49,7 @@ export const router = createBrowserRouter([
   // Public Auth Routes
   {
     element: <AuthLayout />,
+    errorElement: <RouteError />,
     children: [
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> },
@@ -63,6 +65,7 @@ export const router = createBrowserRouter([
       {
         path: '/app',
         element: <AppLayout />,
+        errorElement: <RouteError />,
         children: [
           { index: true, element: <DashboardPage /> },
           { path: 'customers', element: <CustomersPage /> },
@@ -106,6 +109,7 @@ export const router = createBrowserRouter([
       {
         path: '/portal',
         element: <PortalLayout />,
+        errorElement: <RouteError />,
         children: [
           { index: true, element: <MySubscriptionsPage /> },
           { path: 'invoices', element: <MyInvoicesPage /> },

@@ -37,7 +37,7 @@ import Money from '../../components/Money';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import LoadingBlock from '../../components/LoadingBlock';
 import ErrorState from '../../components/ErrorState';
-import { formatDate } from '../../utils/format';
+import { formatDate, formatDateTime } from '../../utils/format';
 
 const STEPS = ['DRAFT', 'QUOTATION', 'CONFIRMED', 'ACTIVE', 'CLOSED'];
 
@@ -85,7 +85,8 @@ export default function SubscriptionDetailPage() {
 
   const { data: products } = useQuery({
     queryKey: ['products'],
-    queryFn: () => api.get('/products').then((r) => r.data),
+    queryFn: () =>
+      api.get('/products', { params: { pageSize: 100, active: 'true' } }).then((r) => r.data),
   });
 
   const transitionMutation = useMutation({
@@ -102,12 +103,47 @@ export default function SubscriptionDetailPage() {
     },
   });
 
+  const { data: history } = useQuery({
+    queryKey: ['subscription-history', id],
+    queryFn: () => api.get(`/subscriptions/${id}/history`, { params: { pageSize: 100 } }).then((r) => r.data),
+    enabled: activeTab === 1,
+  });
+
+  // Lines are saved on the server; it returns the subscription with a fresh price preview.
+  const onLinesSaved = (res, msg) => {
+    qc.setQueryData(['subscription', id], res.data);
+    qc.invalidateQueries({ queryKey: ['subscriptions'] });
+    enqueueSnackbar(msg, { variant: 'success' });
+  };
+
+  const addLineMutation = useMutation({
+    mutationFn: (body) => api.post(`/subscriptions/${id}/lines`, body),
+    onSuccess: (res) => {
+      onLinesSaved(res, 'Line added');
+      setSelectedProduct('');
+      setSelectedVariant('');
+      setLineQty(1);
+    },
+    onError: (err) => enqueueSnackbar(toApiError(err).message, { variant: 'error' }),
+  });
+
+  const removeLineMutation = useMutation({
+    mutationFn: (lineId) => api.delete(`/subscriptions/${id}/lines/${lineId}`),
+    onSuccess: (res) => onLinesSaved(res, 'Line removed'),
+    onError: (err) => enqueueSnackbar(toApiError(err).message, { variant: 'error' }),
+  });
+
   const billNowMutation = useMutation({
     mutationFn: () => api.post(`/subscriptions/${id}/invoice`),
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ['invoices'] });
       qc.invalidateQueries({ queryKey: ['subscription', id] });
-      enqueueSnackbar(`Invoice generated: ${res.data.number}`, { variant: 'success' });
+      enqueueSnackbar(
+        res.data.invoicesCreated > 0
+          ? `${res.data.invoicesCreated} invoice(s) generated`
+          : 'Nothing due to bill yet',
+        { variant: res.data.invoicesCreated > 0 ? 'success' : 'info' }
+      );
     },
     onError: (err) => {
       enqueueSnackbar(toApiError(err).message, { variant: 'error' });
@@ -128,47 +164,19 @@ export default function SubscriptionDetailPage() {
   const currentProductObj = (products?.data || []).find((p) => p.id === selectedProduct);
   const availableVariants = currentProductObj?.variants || [];
 
-  const handleAddLine = async () => {
+  const handleAddLine = () => {
     if (!currentProductObj) {
       enqueueSnackbar('Select a product to add', { variant: 'warning' });
       return;
     }
-    const varObj = availableVariants.find((v) => v.id === selectedVariant);
-    const unitPrice =
-      Number(currentProductObj.salesPrice) + Number(varObj?.extraPrice || 0);
-
-    const newLine = {
-      id: String(Date.now()),
-      product: { id: currentProductObj.id, name: currentProductObj.name },
-      variant: varObj ? { id: varObj.id, attribute: varObj.attribute, value: varObj.value } : null,
+    addLineMutation.mutate({
+      productId: currentProductObj.id,
+      ...(selectedVariant ? { variantId: selectedVariant } : {}),
       quantity: Number(lineQty || 1),
-      unitPrice: unitPrice.toFixed(2),
-      tax: currentProductObj.defaultTax || { rate: '0.00', name: 'None' },
-    };
-
-    // Optimistically update lines
-    sub.lines = sub.lines || [];
-    sub.lines.push(newLine);
-
-    // Recalculate preview subtotal
-    const newSubtotal = sub.lines.reduce(
-      (sum, l) => sum + Number(l.unitPrice) * l.quantity,
-      0
-    );
-    sub.preview = sub.preview || {};
-    sub.preview.subtotal = newSubtotal.toFixed(2);
-    sub.preview.total = (newSubtotal * 1.18).toFixed(2); // approximate preview
-
-    setSelectedProduct('');
-    setSelectedVariant('');
-    setLineQty(1);
-    enqueueSnackbar('Line added to subscription', { variant: 'info' });
+    });
   };
 
-  const handleRemoveLine = (idx) => {
-    sub.lines.splice(idx, 1);
-    enqueueSnackbar('Line removed', { variant: 'info' });
-  };
+  const handleRemoveLine = (line) => removeLineMutation.mutate(line.id);
 
   if (isLoading) {
     return <LoadingBlock message="Loading subscription agreement..." />;
@@ -328,7 +336,13 @@ export default function SubscriptionDetailPage() {
                     sx={{ width: 80 }}
                   />
 
-                  <Button variant="outlined" onClick={handleAddLine} sx={{ minWidth: 40, px: 1.5 }}>
+                  <Button
+                    variant="outlined"
+                    aria-label="Add line"
+                    disabled={addLineMutation.isPending}
+                    onClick={handleAddLine}
+                    sx={{ minWidth: 40, px: 1.5 }}
+                  >
                     <AddIcon />
                   </Button>
                 </Box>
@@ -348,15 +362,11 @@ export default function SubscriptionDetailPage() {
                     <TableCell align="right" sx={{ fontWeight: 600 }}>
                       Tax
                     </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 600 }}>
-                      Line Total
-                    </TableCell>
                     {isLinesEditable && <TableCell sx={{ width: 40 }}></TableCell>}
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {(sub.lines || []).map((line, idx) => {
-                    const lineTotal = Number(line.unitPrice) * line.quantity;
                     return (
                       <TableRow key={line.id || idx}>
                         <TableCell>
@@ -376,15 +386,14 @@ export default function SubscriptionDetailPage() {
                         <TableCell align="right">
                           {line.tax?.name ? `${line.tax.name}` : '—'}
                         </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
-                          <Money value={lineTotal} />
-                        </TableCell>
                         {isLinesEditable && (
                           <TableCell align="right">
                             <IconButton
                               size="small"
                               color="error"
-                              onClick={() => handleRemoveLine(idx)}
+                              aria-label="Remove line"
+                              disabled={removeLineMutation.isPending}
+                              onClick={() => handleRemoveLine(line)}
                             >
                               <DeleteOutlineIcon fontSize="small" />
                             </IconButton>
@@ -512,9 +521,34 @@ export default function SubscriptionDetailPage() {
               )}
 
               {activeTab === 1 && (
-                <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-                  Agreement created on {formatDate(sub.startDate)}. Complete audit logging tracked in system.
-                </Typography>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 600 }}>When</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Change</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>By</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {(history?.data || []).length > 0 ? (
+                      history.data.map((h) => (
+                        <TableRow key={h.id}>
+                          <TableCell>{formatDateTime(h.changedAt)}</TableCell>
+                          <TableCell>
+                            {h.fromStatus ? `${h.fromStatus} → ${h.toStatus}` : `Created as ${h.toStatus}`}
+                          </TableCell>
+                          <TableCell>{h.changedBy?.name || 'Billing job'}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={3} align="center" sx={{ py: 3, color: 'text.secondary' }}>
+                          No status changes recorded yet.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               )}
             </CardContent>
           </Card>
