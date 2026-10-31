@@ -89,7 +89,10 @@ export async function listInvoices(q: ListInvoicesQuery, user: AuthUser) {
   const [[column, dir]] = Object.entries(page.orderBy); // whitelisted by toPage
   const conds: Prisma.Sql[] = [];
   const own = scopedCustomerId(user);
-  if (own !== null) conds.push(Prisma.sql`v.customer_id = ${own}`);
+  if (own !== null) {
+    conds.push(Prisma.sql`v.customer_id = ${own}`);
+    conds.push(Prisma.sql`v.status <> 'DRAFT'`); // drafts are staff-only until confirmed
+  }
   else if (q.customerId) conds.push(Prisma.sql`v.customer_id = ${BigInt(q.customerId)}`);
   if (q.subscriptionId) conds.push(Prisma.sql`v.subscription_id = ${BigInt(q.subscriptionId)}`);
   if (q.status) conds.push(Prisma.sql`v.status = ${q.status}::invoice_status`);
@@ -118,7 +121,7 @@ export async function getInvoice(id: bigint, user: AuthUser) {
   const own = scopedCustomerId(user);
   const [inv] = await prisma.$queryRaw<InvoiceRow[]>`
     SELECT ${COLUMNS} FROM v_invoice_balance v JOIN subscriptions s ON s.id = v.subscription_id
-    WHERE v.id = ${id} AND (${own}::bigint IS NULL OR v.customer_id = ${own}::bigint)`;
+    WHERE v.id = ${id} AND (${own}::bigint IS NULL OR (v.customer_id = ${own}::bigint AND v.status <> 'DRAFT'))`;
   if (!inv) throw notFound('Invoice');
 
   const [lines, payments] = await Promise.all([

@@ -48,10 +48,25 @@ beforeEach(async () => {
 });
 afterAll(() => prisma.$disconnect());
 
+describe('DRAFT invoices are staff-only', () => {
+  it('a customer gets 404 (and an empty list) for their own DRAFT invoice until it is confirmed', async () => {
+    const mine = await invoiceFor(c.acme.id);
+    expect((await request(app).get(`${api}/invoices/${mine.id}`).set(bearer(c.acmeToken))).status).toBe(404);
+    expect((await request(app).get(`${api}/invoices/${mine.id}/print`).set(bearer(c.acmeToken))).status).toBe(404);
+    const list = await request(app).get(`${api}/invoices`).set(bearer(c.acmeToken));
+    expect(list.body.total).toBe(0);
+    await confirm(mine.id);
+    expect((await request(app).get(`${api}/invoices/${mine.id}`).set(bearer(c.acmeToken))).status).toBe(200);
+  });
+});
+
 describe('GET /invoices/:id/print', () => {
   it('renders the invoice as HTML for its owner and staff; another customer gets 404', async () => {
     const mine = await invoiceFor(c.acme.id);
     const theirs = await invoiceFor(c.globex.id);
+    // customers only see invoices once staff have confirmed them
+    await confirm(mine.id);
+    await confirm(theirs.id);
 
     const res = await request(app).get(`${api}/invoices/${mine.id}/print`).set(bearer(c.acmeToken));
     expect(res.status).toBe(200);

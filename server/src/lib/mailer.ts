@@ -26,7 +26,10 @@ const transport = configured
 export async function sendMail(mail: Mail): Promise<void> {
   if (!transport) {
     outbox.push(mail);
-    logger.info({ to: mail.to, subject: mail.subject, text: mail.text }, 'email (not sent: SMTP not configured)');
+    logger.info(
+      env.NODE_ENV === 'production' ? { to: mail.to, subject: mail.subject } : { to: mail.to, subject: mail.subject, text: mail.text },
+      'email (not sent: SMTP not configured)',
+    );
     return;
   }
   await transport.sendMail({ from: env.MAIL_FROM, ...mail });

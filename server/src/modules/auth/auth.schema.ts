@@ -4,6 +4,7 @@ import { emailSchema, optionalText } from '../../lib/validation';
 /** Password rule, shared with the frontend: more than 8 characters, upper, lower, special. */
 export const passwordSchema = z.string()
   .min(9, 'Must be more than 8 characters')
+  .refine((v) => Buffer.byteLength(v, 'utf8') <= 72, 'Must be at most 72 bytes')
   .regex(/[a-z]/, 'Needs a lowercase letter')
   .regex(/[A-Z]/, 'Needs an uppercase letter')
   .regex(/[^A-Za-z0-9]/, 'Needs a special character');

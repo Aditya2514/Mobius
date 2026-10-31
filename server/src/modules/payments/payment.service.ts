@@ -18,6 +18,8 @@ export async function recordPayment(invoiceId: bigint, body: RecordPaymentBody, 
     if (!inv) throw new AppError(404, 'NOT_FOUND', 'Invoice not found');
     if (inv.status !== 'CONFIRMED')
       throw new AppError(400, 'BUSINESS_RULE', 'Only confirmed invoices accept payments');
+    if (fromISODate(body.paidOn) < (inv as unknown as { invoice_date: Date }).invoice_date)
+      throw new AppError(400, 'VALIDATION_ERROR', 'Payment date cannot be before the invoice date', { field: 'paidOn' });
     const amount = new Decimal(body.amount);
     const balance = new Decimal(inv.total.toString()).minus(inv.amount_paid.toString());
     if (amount.lte(0) || amount.gt(balance))
