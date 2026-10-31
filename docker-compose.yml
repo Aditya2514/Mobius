@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16
+    # India time zone, so CURRENT_DATE in overdue/report queries is the Indian date (blueprint §7)
+    command: ["postgres", "-c", "timezone=Asia/Kolkata"]
+    environment: { POSTGRES_USER: app, POSTGRES_PASSWORD: app, POSTGRES_DB: subs }
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  db_test:
+    image: postgres:16
+    command: ["postgres", "-c", "timezone=Asia/Kolkata"]
+    environment: { POSTGRES_USER: app, POSTGRES_PASSWORD: app, POSTGRES_DB: subs_test }
+    ports: ["5433:5432"]
+volumes: { pgdata: {} }
