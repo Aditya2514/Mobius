@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-label="Mobius: subscription billing that never bills twice, never skips a period and never over-redeems a discount">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#070b1a"/>
+      <stop offset="0.55" stop-color="#14123a"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="loop" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.5" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#c084fc"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e0e7ff"/>
+      <stop offset="0.5" stop-color="#a5b4fc"/>
+      <stop offset="1" stop-color="#f0abfc"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#6366f1" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#a5b4fc" fill-opacity="0.12"/>
+    </pattern>
+    <path id="inf" d="M300,210 C370,100 505,100 505,210 C505,320 370,320 300,210 C230,100 95,100 95,210 C95,320 230,320 300,210 Z"/>
+    <style>
+      .sans { font-family: 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; }
+      .mono { font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+      .flow { stroke-dasharray: 6 18; animation: flow 1.6s linear infinite; }
+      @keyframes flow { to { stroke-dashoffset: -48; } }
+      .halo { animation: breathe 5s ease-in-out infinite; transform-origin: 300px 210px; }
+      @keyframes breathe { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+      .in1, .in2, .in3, .in4, .in5 { opacity: 0; animation: rise .9s cubic-bezier(.2,.7,.2,1) forwards; }
+      .in1 { animation-delay: .1s; } .in2 { animation-delay: .45s; } .in3 { animation-delay: .9s; }
+      .in4 { animation-delay: 1.25s; } .in5 { animation-delay: 1.6s; }
+      @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+      .float { animation: float 4s ease-in-out infinite; }
+      .float2 { animation: float 4s ease-in-out -2s infinite; }
+      @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+      .caret { animation: blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .shine { animation: shine 6s ease-in-out infinite; }
+      @keyframes shine { 0%,100% { opacity: .0; } 50% { opacity: .9; } }
+    </style>
+  </defs>
+
+  <rect width="1200" height="420" rx="24" fill="url(#bg)"/>
+  <rect width="1200" height="420" rx="24" fill="url(#dots)"/>
+  <rect x="1" y="1" width="1198" height="418" rx="23" fill="none" stroke="#818cf8" stroke-opacity="0.25"/>
+
+  <!-- Möbius loop -->
+  <ellipse class="halo" cx="300" cy="210" rx="250" ry="140" fill="url(#halo)"/>
+  <use href="#inf" fill="none" stroke="url(#loop)" stroke-width="16" stroke-linecap="round" filter="url(#glow)" opacity="0.9"/>
+  <use href="#inf" fill="none" stroke="#0b1020" stroke-width="6" stroke-linecap="round" opacity="0.55"/>
+  <use href="#inf" class="flow" fill="none" stroke="#e0e7ff" stroke-width="2.2" stroke-linecap="round" opacity="0.9"/>
+
+  <!-- billing tokens travelling the loop -->
+  <g filter="url(#softglow)">
+    <circle r="8" fill="#22d3ee"><animateMotion dur="7s" repeatCount="indefinite" rotate="auto"><mpath href="#inf"/></animateMotion></circle>
+    <circle r="8" fill="#a78bfa"><animateMotion dur="7s" begin="-2.33s" repeatCount="indefinite"><mpath href="#inf"/></animateMotion></circle>
+    <circle r="8" fill="#f472b6"><animateMotion dur="7s" begin="-4.66s" repeatCount="indefinite"><mpath href="#inf"/></animateMotion></circle>
+  </g>
+
+  <!-- floating invoice chips -->
+  <g class="float">
+    <g transform="translate(150,58)">
+      <rect width="190" height="40" rx="10" fill="#0f172a" fill-opacity="0.85" stroke="#22d3ee" stroke-opacity="0.6"/>
+      <circle cx="18" cy="20" r="5" fill="#34d399"/>
+      <text x="32" y="25" class="mono" font-size="13" fill="#e2e8f0">INV-000142 · PAID</text>
+    </g>
+  </g>
+  <g class="float2">
+    <g transform="translate(300,330)">
+      <rect width="212" height="40" rx="10" fill="#0f172a" fill-opacity="0.85" stroke="#c084fc" stroke-opacity="0.6"/>
+      <text x="14" y="25" class="mono" font-size="13" fill="#e2e8f0">₹8,283.60 <tspan fill="#94a3b8">· GST 18%</tspan></text>
+    </g>
+  </g>
+
+  <!-- wordmark -->
+  <g class="sans">
+    <g class="in1">
+      <text x="600" y="150" font-size="88" font-weight="800" letter-spacing="-2" fill="url(#title)">Mobius</text>
+      <rect x="600" y="166" width="300" height="3" rx="1.5" fill="url(#loop)"/>
+      <rect class="shine" x="600" y="166" width="300" height="3" rx="1.5" fill="#ffffff"/>
+    </g>
+    <text class="in2" x="602" y="206" font-size="24" font-weight="500" fill="#c7d2fe">Subscription &amp; recurring billing, done right.</text>
+    <g class="in3 mono" font-size="17">
+      <text x="604" y="252" fill="#34d399">✓</text><text x="630" y="252" fill="#e2e8f0">never bills twice     <tspan fill="#64748b">uq_invoice_period</tspan></text>
+    </g>
+    <g class="in4 mono" font-size="17">
+      <text x="604" y="282" fill="#34d399">✓</text><text x="630" y="282" fill="#e2e8f0">never skips a period  <tspan fill="#64748b">catch-up loop</tspan></text>
+    </g>
+    <g class="in5 mono" font-size="17">
+      <text x="604" y="312" fill="#34d399">✓</text><text x="630" y="312" fill="#e2e8f0">never over-redeems    <tspan fill="#64748b">used_count &lt; usage_limit</tspan></text>
+      <rect class="caret" x="1080" y="298" width="10" height="18" fill="#a5b4fc"/>
+    </g>
+    <g class="in5" font-size="13" font-weight="600" letter-spacing="1.5">
+      <text x="604" y="368" fill="#94a3b8">NODE 20  ·  TYPESCRIPT  ·  EXPRESS  ·  PRISMA  ·  POSTGRESQL 16  ·  REACT  ·  MUI</text>
+    </g>
+  </g>
+</svg>

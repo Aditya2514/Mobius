@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-label="Billing engine pipeline: find due, lock, catch up, insert header with ON CONFLICT DO NOTHING, claim discount, price lines">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#070b1a"/><stop offset="1" stop-color="#17153d"/></linearGradient>
+    <linearGradient id="track" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#38bdf8"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#34d399"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#a5b4fc" fill-opacity="0.10"/></pattern>
+    <style>
+      .title { font: 700 20px 'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif; fill: #e0e7ff; }
+      .sub { font: 500 13px 'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif; fill: #94a3b8; }
+      .h { font: 700 15px 'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif; fill: #f1f5f9; }
+      .num { font: 800 13px 'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif; }
+      .d { font: 400 12.5px 'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif; fill: #cbd5e1; }
+      .c { font: 600 12px 'JetBrains Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; }
+      .chip { font: 700 11.5px 'JetBrains Mono', SFMono-Regular, Consolas, Menlo, monospace; fill: #f8fafc; }
+      .lane { font: 600 12px 'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif; fill: #94a3b8; }
+      .flow { stroke-dasharray: 2 10; animation: flow 1.2s linear infinite; }
+      @keyframes flow { to { stroke-dashoffset: -24; } }
+    </style>
+  </defs>
+  <rect width="1200" height="440" rx="20" fill="url(#bg)"/>
+  <rect width="1200" height="440" rx="20" fill="url(#dots)"/>
+  <rect x="1" y="1" width="1198" height="438" rx="19" fill="none" stroke="#818cf8" stroke-opacity="0.25"/>
+  <text x="35" y="40" class="title">runBilling(runDate)</text>
+  <text x="35" y="62" class="sub">server/src/modules/billing/engine.ts · the only code path that creates invoices</text>
+
+  <rect x="31" y="78" width="178" height="222" rx="18" fill="#38bdf8" opacity="0" filter="url(#glow)"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.0001;0.0001;0.0700;1" values="0;0;.55;0;0"/></rect><rect x="35" y="82" width="170" height="214" rx="14" fill="#0f172a" stroke="#38bdf8" stroke-opacity=".7" stroke-width="1.5"/><circle cx="59" cy="110" r="13" fill="#38bdf8" fill-opacity=".15" stroke="#38bdf8"/><text x="59" y="115" text-anchor="middle" class="num" fill="#38bdf8">1</text><text x="81" y="115" class="h">Find due</text><text x="49" y="152" class="d">ACTIVE subscriptions</text><text x="49" y="170" class="d">whose billing date</text><text x="49" y="188" class="d">has arrived</text><rect x="45" y="222" width="150" height="58" rx="8" fill="#020617" stroke="#1e293b"/><text x="55" y="246" class="c" xml:space="preserve" fill="#38bdf8">next_billing_date</text><text x="55" y="266" class="c" xml:space="preserve" fill="#38bdf8">  &lt;= runDate</text><path d="M208,189.0 l14,0" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/><rect x="223" y="78" width="178" height="222" rx="18" fill="#818cf8" opacity="0" filter="url(#glow)"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.1160;0.1561;0.2260;1" values="0;0;.55;0;0"/></rect><rect x="227" y="82" width="170" height="214" rx="14" fill="#0f172a" stroke="#818cf8" stroke-opacity=".7" stroke-width="1.5"/><circle cx="251" cy="110" r="13" fill="#818cf8" fill-opacity=".15" stroke="#818cf8"/><text x="251" y="115" text-anchor="middle" class="num" fill="#818cf8">2</text><text x="273" y="115" class="h">Lock the row</text><text x="241" y="152" class="d">one transaction each;</text><text x="241" y="170" class="d">a parallel run skips</text><text x="241" y="188" class="d">it, never waits</text><rect x="237" y="222" width="150" height="58" rx="8" fill="#020617" stroke="#1e293b"/><text x="247" y="246" class="c" xml:space="preserve" fill="#818cf8">FOR UPDATE</text><text x="247" y="266" class="c" xml:space="preserve" fill="#818cf8">  SKIP LOCKED</text><path d="M400,189.0 l14,0" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/><rect x="415" y="78" width="178" height="222" rx="18" fill="#a78bfa" opacity="0" filter="url(#glow)"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.2720;0.3121;0.3820;1" values="0;0;.55;0;0"/></rect><rect x="419" y="82" width="170" height="214" rx="14" fill="#0f172a" stroke="#a78bfa" stroke-opacity=".7" stroke-width="1.5"/><circle cx="443" cy="110" r="13" fill="#a78bfa" fill-opacity=".15" stroke="#a78bfa"/><text x="443" y="115" text-anchor="middle" class="num" fill="#a78bfa">3</text><text x="465" y="115" class="h">Catch up</text><text x="433" y="152" class="d">bill every missed</text><text x="433" y="170" class="d">period, counted from</text><text x="433" y="188" class="d">the billing anchor</text><rect x="429" y="222" width="150" height="58" rx="8" fill="#020617" stroke="#1e293b"/><text x="439" y="246" class="c" xml:space="preserve" fill="#a78bfa">while start</text><text x="439" y="266" class="c" xml:space="preserve" fill="#a78bfa">  &lt;= runDate</text><path d="M592,189.0 l14,0" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/><rect x="607" y="78" width="178" height="222" rx="18" fill="#f472b6" opacity="0" filter="url(#glow)"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.4280;0.4681;0.5380;1" values="0;0;.55;0;0"/></rect><rect x="611" y="82" width="170" height="214" rx="14" fill="#0f172a" stroke="#f472b6" stroke-opacity=".7" stroke-width="1.5"/><circle cx="635" cy="110" r="13" fill="#f472b6" fill-opacity=".15" stroke="#f472b6"/><text x="635" y="115" text-anchor="middle" class="num" fill="#f472b6">4</text><text x="657" y="115" class="h">Insert header</text><text x="625" y="152" class="d">the database refuses</text><text x="625" y="170" class="d">a second invoice for</text><text x="625" y="188" class="d">the same period</text><rect x="621" y="222" width="150" height="58" rx="8" fill="#020617" stroke="#1e293b"/><text x="631" y="246" class="c" xml:space="preserve" fill="#f472b6">ON CONFLICT</text><text x="631" y="266" class="c" xml:space="preserve" fill="#f472b6">  DO NOTHING</text><path d="M784,189.0 l14,0" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/><rect x="799" y="78" width="178" height="222" rx="18" fill="#fbbf24" opacity="0" filter="url(#glow)"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.5840;0.6241;0.6940;1" values="0;0;.55;0;0"/></rect><rect x="803" y="82" width="170" height="214" rx="14" fill="#0f172a" stroke="#fbbf24" stroke-opacity=".7" stroke-width="1.5"/><circle cx="827" cy="110" r="13" fill="#fbbf24" fill-opacity=".15" stroke="#fbbf24"/><text x="827" y="115" text-anchor="middle" class="num" fill="#fbbf24">5</text><text x="849" y="115" class="h">Claim discount</text><text x="817" y="152" class="d">atomic slot claim;</text><text x="817" y="170" class="d">lost the race? pick</text><text x="817" y="188" class="d">again without it</text><rect x="813" y="222" width="150" height="58" rx="8" fill="#020617" stroke="#1e293b"/><text x="823" y="246" class="c" xml:space="preserve" fill="#fbbf24">used_count</text><text x="823" y="266" class="c" xml:space="preserve" fill="#fbbf24">  &lt; usage_limit</text><path d="M976,189.0 l14,0" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/><rect x="991" y="78" width="178" height="222" rx="18" fill="#34d399" opacity="0" filter="url(#glow)"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.7400;0.7801;0.8500;1" values="0;0;.55;0;0"/></rect><rect x="995" y="82" width="170" height="214" rx="14" fill="#0f172a" stroke="#34d399" stroke-opacity=".7" stroke-width="1.5"/><circle cx="1019" cy="110" r="13" fill="#34d399" fill-opacity=".15" stroke="#34d399"/><text x="1019" y="115" text-anchor="middle" class="num" fill="#34d399">6</text><text x="1041" y="115" class="h">Price &amp; total</text><text x="1009" y="152" class="d">subtotal → discount</text><text x="1009" y="170" class="d">→ tax, Decimal,</text><text x="1009" y="188" class="d">half-up per line</text><rect x="1005" y="222" width="150" height="58" rx="8" fill="#020617" stroke="#1e293b"/><text x="1015" y="246" class="c" xml:space="preserve" fill="#34d399">sub − disc</text><text x="1015" y="266" class="c" xml:space="preserve" fill="#34d399">  + tax = total</text>
+
+  <!-- lanes -->
+  <text x="35" y="338" class="lane">first run</text>
+  <text x="35" y="430" class="lane">same run again (or two at once)</text>
+  <path d="M120.0,352 L1080.0,352" stroke="url(#track)" stroke-width="2" opacity=".5"/>
+  <path d="M120.0,352 L1080.0,352" stroke="#e0e7ff" stroke-width="2" class="flow" opacity=".6"/>
+  <path d="M120.0,400 L696.0,400" stroke="#f87171" stroke-width="2" opacity=".35" stroke-dasharray="4 6"/>
+  <circle cx="120.0" cy="352" r="4" fill="#38bdf8"/><circle cx="312.0" cy="352" r="4" fill="#818cf8"/><circle cx="504.0" cy="352" r="4" fill="#a78bfa"/><circle cx="696.0" cy="352" r="4" fill="#f472b6"/><circle cx="888.0" cy="352" r="4" fill="#fbbf24"/><circle cx="1080.0" cy="352" r="4" fill="#34d399"/>
+  <circle cx="120.0" cy="400" r="3" fill="#475569"/><circle cx="312.0" cy="400" r="3" fill="#475569"/><circle cx="504.0" cy="400" r="3" fill="#475569"/><circle cx="696.0" cy="400" r="3" fill="#475569"/>
+  <path d="M696.0,390 l0,20" stroke="#f87171" stroke-width="3"/>
+
+  <!-- packet 1: a new invoice travels the whole pipeline -->
+  <g>
+    <animateMotion dur="9s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.78;1" keyPoints="0;1;1" path="M120.0,352 L1080.0,352"/>
+    <animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;.03;0.78;.93;1" values="0;1;1;0;0"/>
+    <g><rect x="-48" y="-13" width="96" height="26" rx="13" fill="#1e1b4b" stroke="#a78bfa" /><text x="0" y="5" text-anchor="middle" class="chip">INV-000142</text></g>
+  </g>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.7800;0.8000;.93;1" values="0;0;1;1;0"/>
+    <rect x="1025.0" y="372" width="110" height="24" rx="12" fill="#064e3b" stroke="#34d399"/>
+    <text x="1080.0" y="388" text-anchor="middle" class="chip" fill="#a7f3d0">created ✓</text>
+  </g>
+
+  <!-- packet 2: the duplicate attempt dies at the unique constraint -->
+  <g>
+    <animateMotion dur="9s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.4680;1" keyPoints="0;1;1" path="M120.0,400 L644.0,400"/>
+    <animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;.03;0.4680;0.5480;1" values="0;1;1;0;0"/>
+    <g><rect x="-48" y="-13" width="96" height="26" rx="13" fill="#3f0d18" stroke="#f87171" stroke-dasharray="4 3"/><text x="0" y="5" text-anchor="middle" class="chip">INV-000142</text></g>
+  </g>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="9s" repeatCount="indefinite" keyTimes="0;0.4680;0.4980;.93;1" values="0;0;1;1;0"/>
+    <rect x="710.0" y="387" width="292" height="26" rx="13" fill="#450a0a" stroke="#f87171"/>
+    <text x="856.0" y="405" text-anchor="middle" class="chip" fill="#fecaca">uq_invoice_period → 0 rows, skipped</text>
+  </g>
+</svg>
