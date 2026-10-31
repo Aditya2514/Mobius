@@ -23,6 +23,7 @@ import { useSnackbar } from 'notistack';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { formatMoney } from '../../utils/format';
 import { api, toApiError } from '../../api/client';
 import PageHeader from '../../components/PageHeader';
 import LoadingBlock from '../../components/LoadingBlock';
@@ -197,7 +198,7 @@ export default function TemplateFormPage() {
                   >
                     {(plans?.data || []).map((p) => (
                       <MenuItem key={p.id} value={p.id}>
-                        {p.name} ({p.billingPeriod} - ₹{p.price})
+                        {p.name} ({p.billingPeriod} - {formatMoney(p.price)})
                       </MenuItem>
                     ))}
                   </TextField>
@@ -271,7 +272,7 @@ export default function TemplateFormPage() {
                 >
                   {(products?.data || []).map((p) => (
                     <MenuItem key={p.id} value={p.id}>
-                      {p.name} (₹{p.salesPrice})
+                      {p.name} ({formatMoney(p.salesPrice)})
                     </MenuItem>
                   ))}
                 </TextField>
@@ -288,7 +289,7 @@ export default function TemplateFormPage() {
                   <MenuItem value="">None</MenuItem>
                   {availableVariants.map((v) => (
                     <MenuItem key={v.id} value={v.id}>
-                      {v.attribute}: {v.value} (+₹{v.extraPrice})
+                      {v.attribute}: {v.value} (+{formatMoney(v.extraPrice)})
                     </MenuItem>
                   ))}
                 </TextField>
@@ -338,7 +339,7 @@ export default function TemplateFormPage() {
                         </TableCell>
                         <TableCell align="center">{l.quantity}</TableCell>
                         <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                          ₹{Number(l.unitPrice).toFixed(2)}
+                          {formatMoney(l.unitPrice)}
                         </TableCell>
                         <TableCell align="right">
                           <IconButton

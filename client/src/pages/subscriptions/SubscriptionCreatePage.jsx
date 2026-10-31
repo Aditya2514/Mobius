@@ -16,6 +16,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { formatMoney } from '../../utils/format';
 import { api, toApiError } from '../../api/client';
 import PageHeader from '../../components/PageHeader';
 
@@ -196,7 +197,7 @@ export default function SubscriptionCreatePage() {
               >
                 {(plans?.data || []).map((p) => (
                   <MenuItem key={p.id} value={p.id}>
-                    {p.name} ({p.billingPeriod} - ₹{p.price})
+                    {p.name} ({p.billingPeriod} - {formatMoney(p.price)})
                   </MenuItem>
                 ))}
               </TextField>

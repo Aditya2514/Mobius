@@ -58,7 +58,7 @@ export default function PaymentsPage() {
       headerAlign: 'right',
       renderCell: (p) => (
         <Typography variant="body2" fontWeight={700} color="success.dark">
-          +<Money value={p.value} />
+          <Money sign="+" hideZeroSign value={p.value} />
         </Typography>
       ),
     },

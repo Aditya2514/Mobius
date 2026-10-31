@@ -123,9 +123,9 @@ export default function MyInvoiceDetailPage() {
                   <Money value={line.unitPrice} />
                 </TableCell>
                 <TableCell align="right" sx={{ color: 'secondary.main' }}>
-                  {Number(line.discountAmount) > 0 ? `-₹${line.discountAmount}` : '—'}
+                  {Number(line.discountAmount) > 0 ? <Money sign="-" value={line.discountAmount} /> : '—'}
                 </TableCell>
-                <TableCell align="right">{line.taxAmount ? `+₹${line.taxAmount}` : '—'}</TableCell>
+                <TableCell align="right">{Number(line.taxAmount) > 0 ? <Money sign="+" value={line.taxAmount} /> : '—'}</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 600 }}>
                   <Money value={line.lineTotal} />
                 </TableCell>
@@ -150,7 +150,7 @@ export default function MyInvoiceDetailPage() {
                 Discount:
               </Typography>
               <Typography variant="body2" color="secondary.main" fontWeight={600}>
-                -<Money value={invoice.discountTotal} />
+                <Money sign="-" hideZeroSign value={invoice.discountTotal} />
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
@@ -158,7 +158,7 @@ export default function MyInvoiceDetailPage() {
                 GST Tax:
               </Typography>
               <Typography variant="body2" fontWeight={600}>
-                +<Money value={invoice.taxTotal} />
+                <Money sign="+" hideZeroSign value={invoice.taxTotal} />
               </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />

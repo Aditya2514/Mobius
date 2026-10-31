@@ -251,10 +251,10 @@ export default function InvoiceDetailPage() {
                       <Money value={line.unitPrice} />
                     </TableCell>
                     <TableCell align="right" sx={{ color: 'secondary.main', fontVariantNumeric: 'tabular-nums' }}>
-                      {Number(line.discountAmount) > 0 ? `-₹${line.discountAmount}` : '—'}
+                      {Number(line.discountAmount) > 0 ? <Money sign="-" value={line.discountAmount} /> : '—'}
                     </TableCell>
                     <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                      {line.taxAmount ? `+₹${line.taxAmount}` : '—'}
+                      {Number(line.taxAmount) > 0 ? <Money sign="+" value={line.taxAmount} /> : '—'}
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
                       <Money value={line.lineTotal} />
@@ -280,7 +280,7 @@ export default function InvoiceDetailPage() {
                     Discount Total:
                   </Typography>
                   <Typography variant="body2" color="secondary.main" fontWeight={600}>
-                    -<Money value={invoice.discountTotal} />
+                    <Money sign="-" hideZeroSign value={invoice.discountTotal} />
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.75 }}>
@@ -288,7 +288,7 @@ export default function InvoiceDetailPage() {
                     Tax Total:
                   </Typography>
                   <Typography variant="body2" fontWeight={600}>
-                    +<Money value={invoice.taxTotal} />
+                    <Money sign="+" hideZeroSign value={invoice.taxTotal} />
                   </Typography>
                 </Box>
                 <Divider sx={{ my: 1 }} />
@@ -349,7 +349,7 @@ export default function InvoiceDetailPage() {
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                         <Chip size="small" label={p.method} color="primary" variant="outlined" />
                         <Typography variant="body2" fontWeight={700} color="success.dark">
-                          +<Money value={p.amount} />
+                          <Money sign="+" hideZeroSign value={p.amount} />
                         </Typography>
                       </Box>
                       <Typography variant="caption" color="text.secondary" display="block">
