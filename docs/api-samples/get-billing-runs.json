@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "runDate": "2026-10-31",
+      "startedAt": "2026-10-31T09:03:07.814Z",
+      "finishedAt": "2026-10-31T09:03:07.971Z",
+      "invoicesCreated": 13,
+      "subscriptionsClosed": 0,
+      "errors": [],
+      "triggeredBy": {
+        "id": "1",
+        "name": "Administrator"
+      }
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 1
+}

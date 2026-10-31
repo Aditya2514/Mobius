@@ -1,0 +1,78 @@
+{
+  "id": "11",
+  "number": "SUB-000011",
+  "customer": {
+    "id": "3",
+    "name": "Acme Ops",
+    "email": "customer@acme.test",
+    "companyName": "Acme Operations Pvt Ltd"
+  },
+  "plan": {
+    "id": "3",
+    "name": "CRM Monthly",
+    "billingPeriod": "MONTHLY",
+    "minQuantity": 1,
+    "isPausable": true,
+    "isClosable": true,
+    "isRenewable": true,
+    "autoClose": true
+  },
+  "status": "DRAFT",
+  "startDate": "2026-11-01",
+  "expiryDate": null,
+  "nextBillingDate": null,
+  "recurringTotal": "9168.60",
+  "template": null,
+  "paymentTermsDays": 15,
+  "quotationValidUntil": null,
+  "pausedAt": null,
+  "closedAt": null,
+  "notes": "Quotation for 5 Odoo CRM seats with premium setup",
+  "createdAt": "2026-10-31T09:03:07.115Z",
+  "allowedActions": [
+    "send_quote",
+    "cancel"
+  ],
+  "lines": [
+    {
+      "id": "16",
+      "product": {
+        "id": "1",
+        "name": "CRM Pro"
+      },
+      "variant": {
+        "id": "1",
+        "attribute": "Brand",
+        "value": "Odoo"
+      },
+      "quantity": 5,
+      "unitPrice": "1560.00",
+      "tax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      }
+    },
+    {
+      "id": "17",
+      "product": {
+        "id": "4",
+        "name": "Cloud Storage 100 GB"
+      },
+      "variant": null,
+      "quantity": 3,
+      "unitPrice": "250.00",
+      "tax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      }
+    }
+  ],
+  "preview": {
+    "subtotal": "8550.00",
+    "discountTotal": "780.00",
+    "taxTotal": "1398.60",
+    "total": "9168.60"
+  }
+}

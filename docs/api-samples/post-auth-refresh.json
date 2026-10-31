@@ -1,0 +1,15 @@
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTM0MzczODYsImV4cCI6MTc5MzQzODI4Niwic3ViIjoiMSJ9.LGDS0BFLC7m4TwSB3WLukYqZ2YArOlTW3mlK3BGidbo",
+  "user": {
+    "id": "1",
+    "email": "admin@brightloop.test",
+    "fullName": "Admin",
+    "role": "ADMIN",
+    "companyName": "Brightloop Software",
+    "phone": null,
+    "address": null,
+    "gstin": null,
+    "isActive": true,
+    "createdAt": "2026-10-31T09:02:59.962Z"
+  }
+}

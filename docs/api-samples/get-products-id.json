@@ -1,0 +1,24 @@
+{
+  "id": "7",
+  "name": "Security Suite Pro",
+  "type": "SERVICE",
+  "salesPrice": "1500.00",
+  "costPrice": "600.00",
+  "notes": "Advanced endpoint protection and security monitoring",
+  "isActive": true,
+  "createdAt": "2026-10-31T09:03:06.995Z",
+  "updatedAt": "2026-10-31T09:03:06.995Z",
+  "defaultTax": {
+    "id": "3",
+    "name": "GST 18%",
+    "rate": "18.00"
+  },
+  "variants": [
+    {
+      "id": "3",
+      "attribute": "Edition",
+      "value": "Enterprise",
+      "extraPrice": "500.00"
+    }
+  ]
+}

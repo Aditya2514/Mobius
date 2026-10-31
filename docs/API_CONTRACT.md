@@ -37,8 +37,8 @@ and update this file in the same commit as the code (and MSW mock) change.
 | POST | /auth/login | Public | { email, password } → { accessToken, user } + rt cookie |
 | POST | /auth/refresh | Cookie | → { accessToken, user }; rotates cookie. 401 with details.retry = true means another tab just refreshed: the cookie was kept, retry once after ~300 ms. Any other 401 clears the cookie: log out |
 | POST | /auth/logout | Any | Revokes refresh token → 204 |
-| POST | /auth/forgot-password | Public | { email } → always 200 { message } |
-| POST | /auth/reset-password | Public | { token, newPassword } → 200 { message }; bad or used token → 400 BUSINESS\_RULE |
+| POST | /auth/forgot-password | Public | { email } → always 200 { message: "If that email is registered, a reset link is on its way." } |
+| POST | /auth/reset-password | Public | { token, newPassword } → 200 { message: "Password updated. You can log in now." }; bad or used token → 400 BUSINESS_RULE |
 | GET / PATCH | /me | Any | Own profile |
 | GET / POST | /users | Admin | List users ?role= / create staff |
 | PATCH | /users/:id | Admin | Edit, deactivate |
@@ -52,33 +52,33 @@ and update this file in the same commit as the code (and MSW mock) change.
 | PATCH / DELETE | /variants/:id | Admin | Duplicate attribute+value → 409; DELETE of a variant in use → 409 |
 | GET / POST | /plans | Read all; write Admin | ?q=&billingPeriod=&active=&available=true (available = active and today's India date in range); customers always get available only |
 | GET / PATCH | /plans/:id | Read all; write Admin | billingPeriod can't change once subscriptions use the plan (400) |
-| GET / POST | /quotation-templates | Read Admin, Staff; write Admin | ?q=&planId=; list items have lineCount, no lines. POST { name, planId, validityDays, paymentTermsDays?, notes?, lines: [{ productId, variantId?, quantity, unitPrice?, taxId? }] }; quantity below plan minimum → 400 BUSINESS\_RULE |
+| GET / POST | /quotation-templates | Read Admin, Staff; write Admin | ?q=&planId=; list items have lineCount, no lines. POST { name, planId, validityDays, paymentTermsDays?, notes?, lines: [{ productId, variantId?, quantity, unitPrice?, taxId? }] }; quantity below plan minimum → 400 BUSINESS_RULE |
 | GET / PATCH / DELETE | /quotation-templates/:id | Read Admin, Staff; write Admin | PATCH lines replaces all lines; DELETE of a template subscriptions came from → 409 |
 | GET | /subscriptions | Admin, Staff, Customer (own) | ?status=&customerId=&planId=&from=&to=&q= (from/to filter startDate; q matches number, customer name, company or email). recurringTotal = preview total |
-| POST | /subscriptions | Admin, Staff | { customerId, planId, startDate, expiryDate?, paymentTermsDays?, templateId?, lines?, notes? } → 201 DRAFT detail. No lines + templateId = copy the template's lines and payment terms. Plan must be available today (else 400 BUSINESS\_RULE) |
-| GET / PATCH | /subscriptions/:id | GET scoped; PATCH Admin, Staff | PATCH { planId?, startDate?, expiryDate?, paymentTermsDays?, notes? } in DRAFT or QUOTATION only (else 400 INVALID\_TRANSITION); status is never set by PATCH |
+| POST | /subscriptions | Admin, Staff | { customerId, planId, startDate, expiryDate?, paymentTermsDays?, templateId?, lines?, notes? } → 201 DRAFT detail. No lines + templateId = copy the template's lines and payment terms. Plan must be available today (else 400 BUSINESS_RULE) |
+| GET / PATCH | /subscriptions/:id | GET scoped; PATCH Admin, Staff | PATCH { planId?, startDate?, expiryDate?, paymentTermsDays?, notes? } in DRAFT or QUOTATION only (else 400 INVALID_TRANSITION); status is never set by PATCH |
 | POST | /subscriptions/:id/lines | Admin, Staff | { productId, variantId?, quantity, unitPrice?, taxId? } → 201 subscription detail. unitPrice omitted = product price + variant extra; taxId omitted = product default, null = no tax |
-| PATCH / DELETE | /subscriptions/:id/lines/:lineId | Admin, Staff | DRAFT or QUOTATION only; both return the subscription detail (fresh preview). PATCH keeps the agreed unitPrice unless a new one is sent or the variant changes |
-| POST | /subscriptions/:id/transition | Scoped | { action } → updated subscription detail. Not allowed from this status → 400 INVALID\_TRANSITION with details.allowed; plan forbids it → 400 BUSINESS\_RULE; customer calling a staff action → 403 |
-| GET | /subscriptions/:id/history | Admin, Staff | Paginated, oldest first: [{ id, fromStatus, toStatus, changedBy: { id, name } \| null, changedAt }]; changedBy null = billing job |
-| POST | /subscriptions/:id/invoice | Admin, Staff | Bill this subscription now (everything due up to today, same engine, idempotent) → { invoicesCreated }; not ACTIVE → 400 BUSINESS\_RULE |
+| PATCH / DELETE | /subscriptions/:id/lines/:lineId | Admin, Staff | DRAFT or QUOTATION only; both return 200 subscription detail (fresh preview). PATCH keeps the agreed unitPrice unless a new one is sent or the variant changes |
+| POST | /subscriptions/:id/transition | Scoped | { action } → updated subscription detail. Not allowed from this status → 400 INVALID_TRANSITION with details.allowed; plan forbids it → 400 BUSINESS_RULE; customer calling a staff action → 403 |
+| GET | /subscriptions/:id/history | Admin, Staff | Paginated, oldest first: { data: [{ id, fromStatus, toStatus, changedBy: { id, name } \| null, changedAt }], page, pageSize, total }; changedBy null = billing job |
+| POST | /subscriptions/:id/invoice | Admin, Staff | Bill this subscription now (everything due up to today, same engine, idempotent) → { invoicesCreated }; not ACTIVE → 400 BUSINESS_RULE |
 | GET / POST | /discounts | Read Admin, Staff; write Admin | { name, type, value, scope, minPurchase, minQuantity, startDate, endDate?, usageLimit?, productIds?, subscriptionIds? } |
 | GET / PATCH | /discounts/:id | Read Admin, Staff; write Admin | Shows usedCount |
 | GET | /invoices | Admin, Staff, Customer (own) | ?status=&overdue=true\|false&customerId=&subscriptionId=&from=&to=&q= (from/to filter invoiceDate; q matches number, bill-to name or email). Sort: invoiceDate (default -invoiceDate), dueDate, number, total, balanceDue, status |
 | GET | /invoices/:id | Scoped | Lines + payments |
-| POST | /invoices/:id/confirm | Admin, Staff | DRAFT → CONFIRMED → invoice detail. Not DRAFT → 400 INVALID\_TRANSITION; no lines or zero total → 400 BUSINESS\_RULE |
+| POST | /invoices/:id/confirm | Admin, Staff | DRAFT → CONFIRMED → invoice detail. Not DRAFT → 400 INVALID_TRANSITION; no lines or zero total → 400 BUSINESS_RULE |
 | POST | /invoices/bulk-confirm | Admin, Staff | { ids: ["1", ...] } (max 500) → { confirmed: ["1", ...], skipped: [{ id, reason }] }; each invoice is confirmed on its own |
-| POST | /invoices/:id/cancel | Admin, Staff | DRAFT, or CONFIRMED with amountPaid 0 → invoice detail. PAID or CANCELLED → 400 INVALID\_TRANSITION; payments recorded → 400 BUSINESS\_RULE. A used discount slot is not returned |
-| POST | /invoices/:id/send | Admin, Staff | CONFIRMED or PAID only (else 400 BUSINESS\_RULE). Emails the bill-to address with the PDF attached (if no PDF can be made: the invoice as HTML plus a portal link); sets sentAt → invoice detail + pdfAttached |
-| GET | /invoices/:id/pdf | Scoped | application/pdf (A4). Chrome unavailable → 503 PDF\_UNAVAILABLE: use /print |
+| POST | /invoices/:id/cancel | Admin, Staff | DRAFT, or CONFIRMED with amountPaid 0 → invoice detail. PAID or CANCELLED → 400 INVALID_TRANSITION; payments recorded → 400 BUSINESS_RULE. A used discount slot is not returned |
+| POST | /invoices/:id/send | Admin, Staff | CONFIRMED or PAID only (else 400 BUSINESS_RULE). Emails the bill-to address with the PDF attached (if no PDF can be made: the invoice as HTML plus a portal link); sets sentAt → invoice detail + pdfAttached: boolean |
+| GET | /invoices/:id/pdf | Scoped | application/pdf (A4). Chrome unavailable → 503 PDF_UNAVAILABLE: use /print |
 | GET | /invoices/:id/print | Scoped | text/html: the same invoice page with print CSS; browser "Save as PDF" works without the server's Chrome |
-| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment. paidOn after today (India date) → 400 VALIDATION\_ERROR on paidOn. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS\_RULE); the invoice becomes PAID when fully paid |
-| GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= (from/to filter paidOn) → [{ id, invoiceId, invoiceNumber, method, amount, paidOn, reference, note, createdAt, recordedBy: { id, name } }]; recordedBy is omitted for customers |
+| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment record: { id, invoiceId, method, amount, paidOn, reference, note, recordedBy: "userId", createdAt }. paidOn after today (India date) → 400 VALIDATION_ERROR on paidOn. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS_RULE); the invoice becomes PAID when fully paid |
+| GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= (from/to filter paidOn) → { data: [{ id, invoiceId, invoiceNumber, method, amount, paidOn, reference, note, createdAt, recordedBy: { id, name } }], page, pageSize, total }; recordedBy is omitted for customers |
 | POST | /billing/run | Admin | { date? } (default today, India date; a future date → 400) → { invoicesCreated, closed, errors: [{ subscriptionId, message }] } |
-| GET | /billing/runs | Admin | Paginated, newest first: [{ id, runDate, startedAt, finishedAt, invoicesCreated, subscriptionsClosed, errors, triggeredBy: { id, name } \| null }]; triggeredBy null = scheduler |
+| GET | /billing/runs | Admin | Paginated, newest first: { data: [{ id, runDate, startedAt, finishedAt, invoicesCreated, subscriptionsClosed, errors, triggeredBy: { id, name } \| null }], page, pageSize, total }; triggeredBy null = scheduler |
 | GET | /reports/summary | Admin, Staff | Dashboard cards (shape below). mrr = the sum of subscriptions-by-plan mrr, so card and chart match |
 | GET | /reports/revenue | Admin, Staff | ?from=&to= (default: last 12 months incl. this one; max 36 months) → [{ month: "2026-10", amount }], payments received per month, empty months as "0.00" |
-| GET | /reports/overdue | Admin, Staff | Paginated, oldest due first: [{ id, number, customerId, subscriptionNumber, billToName, dueDate, daysOverdue, total, amountPaid, balanceDue }] |
+| GET | /reports/overdue | Admin, Staff | Paginated, oldest due first: { data: [{ id, number, customerId, subscriptionNumber, billToName, dueDate, daysOverdue, total, amountPaid, balanceDue }], page, pageSize, total } |
 | GET | /reports/subscriptions-by-plan | Admin, Staff | [{ planId, planName, billingPeriod, active, mrr }], every plan (active 0 included). mrr = active line amounts per month before discount and tax: yearly ÷ 12, weekly × 52 ÷ 12, daily × 365 ÷ 12 |
 
 **Transition actions:** send\_quote, confirm, revise, activate, pause, resume, close, renew, cancel. Customers may only call pause, resume and close, and only if the plan allows. renew appears in allowedActions only when the plan is renewable and the subscription has an expiry date.
@@ -104,7 +104,8 @@ and update this file in the same commit as the code (and MSW mock) change.
 
 // Product (with variants)
 { "id": "1", "name": "CRM Pro", "type": "SERVICE", "salesPrice": "1000.00", "costPrice": "400.00",
-  "defaultTax": { "id": "1", "name": "GST 18%", "rate": "18.00" }, "notes": "", "isActive": true,
+  "notes": "", "isActive": true, "createdAt": "2026-10-31T07:00:00.000Z", "updatedAt": "2026-10-31T07:00:00.000Z",
+  "defaultTax": { "id": "1", "name": "GST 18%", "rate": "18.00" },
   "variants": [ { "id": "1", "attribute": "Brand", "value": "Odoo", "extraPrice": "560.00" } ] }
 
 // Tax
@@ -122,7 +123,8 @@ and update this file in the same commit as the code (and MSW mock) change.
 // Plan
 { "id": "3", "name": "CRM Monthly", "price": "1000.00", "billingPeriod": "MONTHLY", "minQuantity": 1,
   "availableFrom": "2026-01-01", "availableTo": null,
-  "autoClose": true, "isClosable": true, "isPausable": true, "isRenewable": true, "isActive": true }
+  "autoClose": true, "isClosable": true, "isPausable": true, "isRenewable": true, "isActive": true,
+  "createdAt": "2026-10-31T07:00:00.000Z" }
 
 // Subscription (list item)
 { "id": "42", "number": "SUB-000042", "customer": { "id": "7", "name": "Acme Ops" },
@@ -147,24 +149,46 @@ and update this file in the same commit as the code (and MSW mock) change.
 // Discount
 { "id": "5", "name": "Seats 10%", "type": "PERCENTAGE", "value": "10.00", "scope": "PRODUCT",
   "minPurchase": "0.00", "minQuantity": 5, "startDate": "2026-10-01", "endDate": null,
-  "usageLimit": 100, "usedCount": 4, "isActive": true, "productIds": ["1"], "subscriptionIds": [] }
+  "usageLimit": 100, "usedCount": 4, "isActive": true, "createdAt": "2026-10-31T07:00:00.000Z",
+  "productIds": ["1"], "subscriptionIds": [] }
 
-// Invoice detail (list items omit lines and payments; both also carry customerId)
+// Invoice detail (list items omit lines and payments; both carry customerId)
+// POST /invoices/:id/send adds "pdfAttached": true | false to this shape
 { "id": "501", "number": "INV-000501", "subscriptionId": "42", "subscriptionNumber": "SUB-000042",
-  "status": "CONFIRMED", "isOverdue": false,
+  "customerId": "7", "status": "CONFIRMED", "isOverdue": false,
   "periodStart": "2026-11-01", "periodEnd": "2026-12-01", "invoiceDate": "2026-11-01", "dueDate": "2026-11-16",
-  "billTo": { "name": "Acme Ops", "email": "ops@acme.in", "address": null },
+  "billTo": { "name": "Acme Ops", "email": "ops@acme.in", "address": "4th Floor, Prestige Tower, MG Road, Bengaluru" },
   "subtotal": "7800.00", "discountTotal": "780.00", "taxTotal": "1263.60", "total": "8283.60",
   "amountPaid": "5000.00", "balanceDue": "3283.60", "sentAt": null,
-  "lines": [ { "description": "CRM Pro (Brand: Odoo)", "quantity": 5, "unitPrice": "1560.00",
+  "lines": [ { "id": "1", "description": "CRM Pro (Brand: Odoo)", "quantity": 5, "unitPrice": "1560.00",
                "lineSubtotal": "7800.00", "discountAmount": "780.00", "taxName": "GST 18%",
                "taxRate": "18.00", "taxAmount": "1263.60", "lineTotal": "8283.60" } ],
   "payments": [ { "id": "9", "method": "UPI", "amount": "5000.00", "paidOn": "2026-11-05",
                   "reference": "UTR123", "note": "" } ] }
 
+// POST /invoices/:id/payments (201 created payment)
+{ "id": "9", "invoiceId": "501", "method": "UPI", "amount": "5000.00", "paidOn": "2026-11-05",
+  "reference": "UTR123", "note": "", "recordedBy": "2", "createdAt": "2026-11-05T10:00:00.000Z" }
+
+// GET /payments (list item inside { data: [ ... ], page, pageSize, total })
+{ "id": "9", "invoiceId": "501", "invoiceNumber": "INV-000501", "method": "UPI", "amount": "5000.00",
+  "paidOn": "2026-11-05", "reference": "UTR123", "note": "", "createdAt": "2026-11-05T10:00:00.000Z",
+  "recordedBy": { "id": "2", "name": "Karan Mehta" } }
+
+// GET /billing/runs (list item inside { data: [ ... ], page, pageSize, total })
+{ "id": "1", "runDate": "2026-10-31", "startedAt": "2026-10-31T00:05:00.000Z", "finishedAt": "2026-10-31T00:05:01.000Z",
+  "invoicesCreated": 13, "subscriptionsClosed": 0, "errors": [],
+  "triggeredBy": { "id": "1", "name": "Admin" } }
+
 // GET /reports/summary
 { "activeSubscriptions": 4312, "revenueThisMonth": "1845200.00", "outstanding": "612400.50",
   "overdueCount": 87, "overdueAmount": "143900.00", "mrr": "2210450.00" }
+
+// GET /reports/revenue (array)
+[ { "month": "2026-09", "amount": "145000.00" }, { "month": "2026-10", "amount": "1845200.00" } ]
+
+// GET /reports/subscriptions-by-plan (array)
+[ { "planId": "3", "planName": "CRM Monthly", "billingPeriod": "MONTHLY", "active": 6, "mrr": "46450.00" } ]
 
 // POST /billing/run
 { "invoicesCreated": 312, "closed": 4, "errors": [] }

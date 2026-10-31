@@ -1,0 +1,13 @@
+{
+  "error": {
+    "code": "INVALID_TRANSITION",
+    "message": "Cannot send_quote from ACTIVE",
+    "details": {
+      "allowed": [
+        "pause",
+        "close",
+        "renew"
+      ]
+    }
+  }
+}

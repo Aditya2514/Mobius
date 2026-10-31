@@ -1,0 +1,122 @@
+{
+  "data": [
+    {
+      "id": "3",
+      "name": "Analytics Add-on",
+      "type": "ADDON",
+      "salesPrice": "400.00",
+      "costPrice": "100.00",
+      "notes": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.984Z",
+      "updatedAt": "2026-10-31T09:02:59.984Z",
+      "defaultTax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      },
+      "variants": []
+    },
+    {
+      "id": "6",
+      "name": "Barcode Scanner",
+      "type": "GOODS",
+      "salesPrice": "3500.00",
+      "costPrice": "2200.00",
+      "notes": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.988Z",
+      "updatedAt": "2026-10-31T09:02:59.988Z",
+      "defaultTax": {
+        "id": "2",
+        "name": "GST 12%",
+        "rate": "12.00"
+      },
+      "variants": []
+    },
+    {
+      "id": "4",
+      "name": "Cloud Storage 100 GB",
+      "type": "SERVICE",
+      "salesPrice": "250.00",
+      "costPrice": "90.00",
+      "notes": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.985Z",
+      "updatedAt": "2026-10-31T09:02:59.985Z",
+      "defaultTax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      },
+      "variants": []
+    },
+    {
+      "id": "1",
+      "name": "CRM Pro",
+      "type": "SERVICE",
+      "salesPrice": "1000.00",
+      "costPrice": "400.00",
+      "notes": "Per-seat CRM licence",
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.975Z",
+      "updatedAt": "2026-10-31T09:02:59.975Z",
+      "defaultTax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      },
+      "variants": [
+        {
+          "id": "1",
+          "attribute": "Brand",
+          "value": "Odoo",
+          "extraPrice": "560.00"
+        },
+        {
+          "id": "2",
+          "attribute": "Brand",
+          "value": "Zoho",
+          "extraPrice": "300.00"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Helpdesk Suite",
+      "type": "SERVICE",
+      "salesPrice": "750.00",
+      "costPrice": "250.00",
+      "notes": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.980Z",
+      "updatedAt": "2026-10-31T09:02:59.980Z",
+      "defaultTax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      },
+      "variants": []
+    },
+    {
+      "id": "5",
+      "name": "Onboarding & Training",
+      "type": "SERVICE",
+      "salesPrice": "5000.00",
+      "costPrice": "2000.00",
+      "notes": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.987Z",
+      "updatedAt": "2026-10-31T09:02:59.987Z",
+      "defaultTax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      },
+      "variants": []
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 6
+}

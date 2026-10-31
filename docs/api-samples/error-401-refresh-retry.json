@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "UNAUTHENTICATED",
+    "message": "Session was just refreshed in another tab, retry",
+    "details": {
+      "retry": true
+    }
+  }
+}

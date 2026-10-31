@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "BUSINESS_RULE",
+    "message": "Amount must be between 0.01 and 3283.60",
+    "details": {
+      "field": "amount"
+    }
+  }
+}

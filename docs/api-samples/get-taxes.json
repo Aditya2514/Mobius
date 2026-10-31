@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "2",
+      "name": "GST 12%",
+      "rate": "12.00",
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.973Z"
+    },
+    {
+      "id": "3",
+      "name": "GST 18%",
+      "rate": "18.00",
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.973Z"
+    },
+    {
+      "id": "1",
+      "name": "GST 5%",
+      "rate": "5.00",
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.971Z"
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 3
+}

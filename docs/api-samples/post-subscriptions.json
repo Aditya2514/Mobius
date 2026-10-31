@@ -1,0 +1,43 @@
+{
+  "id": "11",
+  "number": "SUB-000011",
+  "customer": {
+    "id": "3",
+    "name": "Acme Ops",
+    "email": "customer@acme.test",
+    "companyName": "Acme Operations Pvt Ltd"
+  },
+  "plan": {
+    "id": "3",
+    "name": "CRM Monthly",
+    "billingPeriod": "MONTHLY",
+    "minQuantity": 1,
+    "isPausable": true,
+    "isClosable": true,
+    "isRenewable": true,
+    "autoClose": true
+  },
+  "status": "DRAFT",
+  "startDate": "2026-11-01",
+  "expiryDate": null,
+  "nextBillingDate": null,
+  "recurringTotal": "0.00",
+  "template": null,
+  "paymentTermsDays": 15,
+  "quotationValidUntil": null,
+  "pausedAt": null,
+  "closedAt": null,
+  "notes": "Initial quotation draft for expansion seats",
+  "createdAt": "2026-10-31T09:03:07.115Z",
+  "allowedActions": [
+    "send_quote",
+    "cancel"
+  ],
+  "lines": [],
+  "preview": {
+    "subtotal": "0.00",
+    "discountTotal": "0.00",
+    "taxTotal": "0.00",
+    "total": "0.00"
+  }
+}

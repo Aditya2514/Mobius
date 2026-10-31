@@ -1,0 +1,41 @@
+{
+  "id": "1",
+  "number": "INV-000001",
+  "subscriptionId": "1",
+  "subscriptionNumber": "SUB-000001",
+  "customerId": "3",
+  "status": "CONFIRMED",
+  "isOverdue": false,
+  "periodStart": "2026-10-01",
+  "periodEnd": "2026-11-01",
+  "invoiceDate": "2026-10-31",
+  "dueDate": "2026-11-15",
+  "billTo": {
+    "name": "Acme Ops",
+    "email": "customer@acme.test",
+    "address": "4th Floor, Prestige Tower, MG Road, Bengaluru 560001"
+  },
+  "subtotal": "7800.00",
+  "discountTotal": "780.00",
+  "taxTotal": "1263.60",
+  "total": "8283.60",
+  "amountPaid": "0.00",
+  "balanceDue": "8283.60",
+  "sentAt": "2026-10-31T09:03:07.696Z",
+  "lines": [
+    {
+      "id": "1",
+      "description": "CRM Pro (Brand: Odoo)",
+      "quantity": 5,
+      "unitPrice": "1560.00",
+      "lineSubtotal": "7800.00",
+      "discountAmount": "780.00",
+      "taxName": "GST 18%",
+      "taxRate": "18.00",
+      "taxAmount": "1263.60",
+      "lineTotal": "8283.60"
+    }
+  ],
+  "payments": [],
+  "pdfAttached": true
+}

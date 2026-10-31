@@ -1,0 +1,64 @@
+{
+  "id": "11",
+  "number": "SUB-000011",
+  "customer": {
+    "id": "3",
+    "name": "Acme Ops",
+    "email": "customer@acme.test",
+    "companyName": "Acme Operations Pvt Ltd"
+  },
+  "plan": {
+    "id": "3",
+    "name": "CRM Monthly",
+    "billingPeriod": "MONTHLY",
+    "minQuantity": 1,
+    "isPausable": true,
+    "isClosable": true,
+    "isRenewable": true,
+    "autoClose": true
+  },
+  "status": "QUOTATION",
+  "startDate": "2026-11-01",
+  "expiryDate": null,
+  "nextBillingDate": null,
+  "recurringTotal": "8283.60",
+  "template": null,
+  "paymentTermsDays": 15,
+  "quotationValidUntil": "2026-11-30",
+  "pausedAt": null,
+  "closedAt": null,
+  "notes": "Quotation for 5 Odoo CRM seats with premium setup",
+  "createdAt": "2026-10-31T09:03:07.115Z",
+  "allowedActions": [
+    "confirm",
+    "revise",
+    "cancel"
+  ],
+  "lines": [
+    {
+      "id": "16",
+      "product": {
+        "id": "1",
+        "name": "CRM Pro"
+      },
+      "variant": {
+        "id": "1",
+        "attribute": "Brand",
+        "value": "Odoo"
+      },
+      "quantity": 5,
+      "unitPrice": "1560.00",
+      "tax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      }
+    }
+  ],
+  "preview": {
+    "subtotal": "7800.00",
+    "discountTotal": "780.00",
+    "taxTotal": "1263.60",
+    "total": "8283.60"
+  }
+}

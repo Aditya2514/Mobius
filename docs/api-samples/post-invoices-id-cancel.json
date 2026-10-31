@@ -1,0 +1,52 @@
+{
+  "id": "3",
+  "number": "INV-000003",
+  "subscriptionId": "3",
+  "subscriptionNumber": "SUB-000003",
+  "customerId": "5",
+  "status": "CANCELLED",
+  "isOverdue": false,
+  "periodStart": "2026-09-16",
+  "periodEnd": "2027-09-16",
+  "invoiceDate": "2026-10-31",
+  "dueDate": "2026-11-15",
+  "billTo": {
+    "name": "Priya Nair",
+    "email": "ops@bluewave.test",
+    "address": null
+  },
+  "subtotal": "2650.00",
+  "discountTotal": "0.00",
+  "taxTotal": "477.00",
+  "total": "3127.00",
+  "amountPaid": "0.00",
+  "balanceDue": "3127.00",
+  "sentAt": null,
+  "lines": [
+    {
+      "id": "4",
+      "description": "Helpdesk Suite",
+      "quantity": 3,
+      "unitPrice": "750.00",
+      "lineSubtotal": "2250.00",
+      "discountAmount": "0.00",
+      "taxName": "GST 18%",
+      "taxRate": "18.00",
+      "taxAmount": "405.00",
+      "lineTotal": "2655.00"
+    },
+    {
+      "id": "5",
+      "description": "Analytics Add-on",
+      "quantity": 1,
+      "unitPrice": "400.00",
+      "lineSubtotal": "400.00",
+      "discountAmount": "0.00",
+      "taxName": "GST 18%",
+      "taxRate": "18.00",
+      "taxAmount": "72.00",
+      "lineTotal": "472.00"
+    }
+  ],
+  "payments": []
+}

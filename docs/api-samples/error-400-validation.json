@@ -1,0 +1,31 @@
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Enter a valid email",
+    "details": {
+      "field": "email",
+      "fields": [
+        {
+          "field": "email",
+          "message": "Enter a valid email"
+        },
+        {
+          "field": "password",
+          "message": "Must be more than 8 characters"
+        },
+        {
+          "field": "password",
+          "message": "Needs an uppercase letter"
+        },
+        {
+          "field": "password",
+          "message": "Needs a special character"
+        },
+        {
+          "field": "fullName",
+          "message": "Full name is required"
+        }
+      ]
+    }
+  }
+}

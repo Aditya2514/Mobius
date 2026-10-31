@@ -1,0 +1,67 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "name": "CRM Daily Pass",
+      "price": "50.00",
+      "billingPeriod": "DAILY",
+      "minQuantity": 1,
+      "availableFrom": "2026-01-01",
+      "availableTo": null,
+      "autoClose": false,
+      "isClosable": true,
+      "isPausable": false,
+      "isRenewable": false,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.989Z"
+    },
+    {
+      "id": "3",
+      "name": "CRM Monthly",
+      "price": "1000.00",
+      "billingPeriod": "MONTHLY",
+      "minQuantity": 1,
+      "availableFrom": "2026-01-01",
+      "availableTo": null,
+      "autoClose": true,
+      "isClosable": true,
+      "isPausable": true,
+      "isRenewable": true,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.992Z"
+    },
+    {
+      "id": "2",
+      "name": "CRM Weekly",
+      "price": "300.00",
+      "billingPeriod": "WEEKLY",
+      "minQuantity": 1,
+      "availableFrom": "2026-01-01",
+      "availableTo": null,
+      "autoClose": false,
+      "isClosable": true,
+      "isPausable": true,
+      "isRenewable": true,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.991Z"
+    },
+    {
+      "id": "4",
+      "name": "CRM Yearly",
+      "price": "10000.00",
+      "billingPeriod": "YEARLY",
+      "minQuantity": 1,
+      "availableFrom": "2026-01-01",
+      "availableTo": null,
+      "autoClose": false,
+      "isClosable": true,
+      "isPausable": false,
+      "isRenewable": true,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.993Z"
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 4
+}

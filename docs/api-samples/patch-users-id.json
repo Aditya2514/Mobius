@@ -1,0 +1,12 @@
+{
+  "id": "14",
+  "email": "rohan.staff@brightloop.test",
+  "fullName": "Rohan Sharma",
+  "role": "STAFF",
+  "companyName": null,
+  "phone": "+91 98111 22222",
+  "address": null,
+  "gstin": null,
+  "isActive": true,
+  "createdAt": "2026-10-31T09:03:06.760Z"
+}

@@ -1,0 +1,139 @@
+{
+  "data": [
+    {
+      "id": "13",
+      "email": "alex.developer@example.test",
+      "fullName": "Alex Developer",
+      "role": "CUSTOMER",
+      "companyName": "Apex Innovations",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:05.646Z"
+    },
+    {
+      "id": "12",
+      "email": "accounts@malabarspice.test",
+      "fullName": "Farhan Qureshi",
+      "role": "CUSTOMER",
+      "companyName": "Malabar Spice Co",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.014Z"
+    },
+    {
+      "id": "11",
+      "email": "ops@deccanedu.test",
+      "fullName": "Sneha Kulkarni",
+      "role": "CUSTOMER",
+      "companyName": "Deccan EdTech",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.013Z"
+    },
+    {
+      "id": "10",
+      "email": "billing@rajputana.test",
+      "fullName": "Vikram Singh",
+      "role": "CUSTOMER",
+      "companyName": "Rajputana Motors",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.012Z"
+    },
+    {
+      "id": "9",
+      "email": "admin@hooghly.test",
+      "fullName": "Ananya Das",
+      "role": "CUSTOMER",
+      "companyName": "Hooghly Textiles",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.010Z"
+    },
+    {
+      "id": "8",
+      "email": "finance@northstar.test",
+      "fullName": "Rohit Verma",
+      "role": "CUSTOMER",
+      "companyName": "Northstar Retail",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.008Z"
+    },
+    {
+      "id": "7",
+      "email": "it@kaverihealth.test",
+      "fullName": "Meera Iyer",
+      "role": "CUSTOMER",
+      "companyName": "Kaveri Health Clinics",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.007Z"
+    },
+    {
+      "id": "6",
+      "email": "accounts@sahyadri.test",
+      "fullName": "Arjun Shah",
+      "role": "CUSTOMER",
+      "companyName": "Sahyadri Agro Exports",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.005Z"
+    },
+    {
+      "id": "5",
+      "email": "ops@bluewave.test",
+      "fullName": "Priya Nair",
+      "role": "CUSTOMER",
+      "companyName": "Tata Bluewave Logistics",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:03:00.003Z"
+    },
+    {
+      "id": "4",
+      "email": "customer2@globex.test",
+      "fullName": "Globex Finance",
+      "role": "CUSTOMER",
+      "companyName": "Globex India LLP",
+      "phone": "+91 99300 44556",
+      "address": "Unit 12, Hiranandani Business Park, Powai, Mumbai 400076",
+      "gstin": "27AAGFG5678K1Z2",
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.970Z"
+    },
+    {
+      "id": "3",
+      "email": "customer@acme.test",
+      "fullName": "Acme Ops",
+      "role": "CUSTOMER",
+      "companyName": "Acme Operations Pvt Ltd",
+      "phone": "+91 98200 11223",
+      "address": "4th Floor, Prestige Tower, MG Road, Bengaluru 560001",
+      "gstin": "29AABCA1234F1Z5",
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.968Z"
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 11
+}

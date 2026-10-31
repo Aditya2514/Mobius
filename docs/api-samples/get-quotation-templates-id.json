@@ -1,0 +1,51 @@
+{
+  "id": "3",
+  "name": "Security Starter Pack",
+  "validityDays": 30,
+  "paymentTermsDays": 15,
+  "notes": "Includes CRM Pro and Security Suite",
+  "createdAt": "2026-10-31T09:03:07.063Z",
+  "plan": {
+    "id": "3",
+    "name": "CRM Monthly",
+    "billingPeriod": "MONTHLY",
+    "minQuantity": 1
+  },
+  "lines": [
+    {
+      "id": "4",
+      "product": {
+        "id": "1",
+        "name": "CRM Pro"
+      },
+      "variant": {
+        "id": "1",
+        "attribute": "Brand",
+        "value": "Odoo",
+        "extraPrice": "560.00"
+      },
+      "quantity": 5,
+      "unitPrice": null,
+      "tax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      }
+    },
+    {
+      "id": "5",
+      "product": {
+        "id": "7",
+        "name": "Security Suite Pro"
+      },
+      "variant": null,
+      "quantity": 2,
+      "unitPrice": null,
+      "tax": {
+        "id": "3",
+        "name": "GST 18%",
+        "rate": "18.00"
+      }
+    }
+  ]
+}

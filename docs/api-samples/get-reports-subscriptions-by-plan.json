@@ -1,0 +1,37 @@
+[
+  {
+    "planId": "3",
+    "planName": "CRM Monthly",
+    "billingPeriod": "MONTHLY",
+    "active": 6,
+    "mrr": "46450.00"
+  },
+  {
+    "planId": "4",
+    "planName": "CRM Yearly",
+    "billingPeriod": "YEARLY",
+    "active": 2,
+    "mrr": "1417.50"
+  },
+  {
+    "planId": "1",
+    "planName": "CRM Daily Pass",
+    "billingPeriod": "DAILY",
+    "active": 1,
+    "mrr": "47450.00"
+  },
+  {
+    "planId": "2",
+    "planName": "CRM Weekly",
+    "billingPeriod": "WEEKLY",
+    "active": 1,
+    "mrr": "6500.00"
+  },
+  {
+    "planId": "5",
+    "planName": "Custom Annual Pass",
+    "billingPeriod": "YEARLY",
+    "active": 0,
+    "mrr": "0.00"
+  }
+]

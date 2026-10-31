@@ -1,0 +1,17 @@
+{
+  "id": "2",
+  "name": "Festive 15%",
+  "type": "PERCENTAGE",
+  "value": "15.00",
+  "scope": "SUBSCRIPTION",
+  "minPurchase": "500.00",
+  "minQuantity": 1,
+  "startDate": "2026-10-01",
+  "endDate": null,
+  "usageLimit": 50,
+  "usedCount": 0,
+  "isActive": true,
+  "createdAt": "2026-10-31T09:03:07.288Z",
+  "productIds": [],
+  "subscriptionIds": []
+}

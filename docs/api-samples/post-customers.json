@@ -1,0 +1,12 @@
+{
+  "id": "15",
+  "email": "contact@zephyrlabs.test",
+  "fullName": "Zephyr Labs Support",
+  "role": "CUSTOMER",
+  "companyName": "Zephyr Technologies Pvt Ltd",
+  "phone": "+91 97654 32100",
+  "address": "Plot 42, Electronics City, Bengaluru 560100",
+  "gstin": "29AAACZ1234D1Z9",
+  "isActive": true,
+  "createdAt": "2026-10-31T09:03:06.949Z"
+}

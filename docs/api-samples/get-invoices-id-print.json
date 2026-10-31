@@ -1,0 +1,5 @@
+{
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "htmlPreview": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>INV-000001 · Brightloop Software Pvt Ltd</title>\n<style>\n  /* A4, plain CSS, system fonts only. The frontend may restyle this file. */\n  @page { size: A4; margin: 16mm 14mm; }\n  * { box-sizing: border-box; }\n  body {\n    margin: 0; color: #1f2933; font: 10.5pt/1.45 -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;\n    -webkit-print-color-adjust: exact; print-color-adjust: exact;\n  }\n  .page { max-width: 1... [truncated for sample]"
+}

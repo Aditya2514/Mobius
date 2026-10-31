@@ -1,0 +1,12 @@
+{
+  "id": "13",
+  "email": "alex.developer@example.test",
+  "fullName": "Alex Developer",
+  "role": "CUSTOMER",
+  "companyName": "Apex Innovations",
+  "phone": null,
+  "address": null,
+  "gstin": null,
+  "isActive": true,
+  "createdAt": "2026-10-31T09:03:05.646Z"
+}

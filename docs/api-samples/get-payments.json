@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "invoiceId": "1",
+      "invoiceNumber": "INV-000001",
+      "method": "UPI",
+      "amount": "5000.00",
+      "paidOn": "2026-10-31",
+      "reference": "UPI/987654321/AXIS",
+      "note": "Part payment via UPI",
+      "createdAt": "2026-10-31T09:03:07.794Z",
+      "recordedBy": {
+        "id": "2",
+        "name": "Karan Mehta"
+      }
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 1
+}

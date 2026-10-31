@@ -1,0 +1,187 @@
+{
+  "data": [
+    {
+      "id": "10",
+      "number": "SUB-000010",
+      "customer": {
+        "id": "12",
+        "name": "Farhan Qureshi"
+      },
+      "plan": {
+        "id": "3",
+        "name": "CRM Monthly",
+        "billingPeriod": "MONTHLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-26",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-26",
+      "recurringTotal": "1180.00"
+    },
+    {
+      "id": "9",
+      "number": "SUB-000009",
+      "customer": {
+        "id": "11",
+        "name": "Sneha Kulkarni"
+      },
+      "plan": {
+        "id": "4",
+        "name": "CRM Yearly",
+        "billingPeriod": "YEARLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-06",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-06",
+      "recurringTotal": "15840.32"
+    },
+    {
+      "id": "8",
+      "number": "SUB-000008",
+      "customer": {
+        "id": "10",
+        "name": "Vikram Singh"
+      },
+      "plan": {
+        "id": "1",
+        "name": "CRM Daily Pass",
+        "billingPeriod": "DAILY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-28",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-28",
+      "recurringTotal": "1840.80"
+    },
+    {
+      "id": "7",
+      "number": "SUB-000007",
+      "customer": {
+        "id": "9",
+        "name": "Ananya Das"
+      },
+      "plan": {
+        "id": "3",
+        "name": "CRM Monthly",
+        "billingPeriod": "MONTHLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-09-11",
+      "expiryDate": null,
+      "nextBillingDate": "2026-09-11",
+      "recurringTotal": "15975.00"
+    },
+    {
+      "id": "6",
+      "number": "SUB-000006",
+      "customer": {
+        "id": "8",
+        "name": "Rohit Verma"
+      },
+      "plan": {
+        "id": "3",
+        "name": "CRM Monthly",
+        "billingPeriod": "MONTHLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-23",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-23",
+      "recurringTotal": "4012.00"
+    },
+    {
+      "id": "5",
+      "number": "SUB-000005",
+      "customer": {
+        "id": "7",
+        "name": "Meera Iyer"
+      },
+      "plan": {
+        "id": "2",
+        "name": "CRM Weekly",
+        "billingPeriod": "WEEKLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-15",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-15",
+      "recurringTotal": "1770.00"
+    },
+    {
+      "id": "4",
+      "number": "SUB-000004",
+      "customer": {
+        "id": "6",
+        "name": "Arjun Shah"
+      },
+      "plan": {
+        "id": "3",
+        "name": "CRM Monthly",
+        "billingPeriod": "MONTHLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-11",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-11",
+      "recurringTotal": "16567.20"
+    },
+    {
+      "id": "3",
+      "number": "SUB-000003",
+      "customer": {
+        "id": "5",
+        "name": "Priya Nair"
+      },
+      "plan": {
+        "id": "4",
+        "name": "CRM Yearly",
+        "billingPeriod": "YEARLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-09-16",
+      "expiryDate": null,
+      "nextBillingDate": "2026-09-16",
+      "recurringTotal": "3127.00"
+    },
+    {
+      "id": "2",
+      "number": "SUB-000002",
+      "customer": {
+        "id": "4",
+        "name": "Globex Finance"
+      },
+      "plan": {
+        "id": "3",
+        "name": "CRM Monthly",
+        "billingPeriod": "MONTHLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-19",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-19",
+      "recurringTotal": "5192.00"
+    },
+    {
+      "id": "1",
+      "number": "SUB-000001",
+      "customer": {
+        "id": "3",
+        "name": "Acme Ops"
+      },
+      "plan": {
+        "id": "3",
+        "name": "CRM Monthly",
+        "billingPeriod": "MONTHLY"
+      },
+      "status": "ACTIVE",
+      "startDate": "2026-10-01",
+      "expiryDate": null,
+      "nextBillingDate": "2026-10-01",
+      "recurringTotal": "8283.60"
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 10
+}

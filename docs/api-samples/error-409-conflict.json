@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "EMAIL_TAKEN",
+    "message": "Email already registered",
+    "details": {
+      "field": "email"
+    }
+  }
+}

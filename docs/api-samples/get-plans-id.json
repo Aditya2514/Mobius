@@ -1,0 +1,15 @@
+{
+  "id": "5",
+  "name": "Custom Annual Pass",
+  "price": "15000.00",
+  "billingPeriod": "YEARLY",
+  "minQuantity": 2,
+  "availableFrom": "2026-01-01",
+  "availableTo": null,
+  "autoClose": false,
+  "isClosable": true,
+  "isPausable": true,
+  "isRenewable": true,
+  "isActive": true,
+  "createdAt": "2026-10-31T09:03:07.035Z"
+}

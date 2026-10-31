@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "id": "2",
+      "email": "staff@brightloop.test",
+      "fullName": "Karan Mehta",
+      "role": "STAFF",
+      "companyName": "Brightloop Software",
+      "phone": null,
+      "address": null,
+      "gstin": null,
+      "isActive": true,
+      "createdAt": "2026-10-31T09:02:59.965Z"
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 1
+}

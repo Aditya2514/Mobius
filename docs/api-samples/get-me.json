@@ -1,0 +1,12 @@
+{
+  "id": "1",
+  "email": "admin@brightloop.test",
+  "fullName": "Admin",
+  "role": "ADMIN",
+  "companyName": "Brightloop Software",
+  "phone": null,
+  "address": null,
+  "gstin": null,
+  "isActive": true,
+  "createdAt": "2026-10-31T09:02:59.962Z"
+}

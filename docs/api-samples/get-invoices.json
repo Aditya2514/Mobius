@@ -1,0 +1,82 @@
+{
+  "data": [
+    {
+      "id": "3",
+      "number": "INV-000003",
+      "subscriptionId": "3",
+      "subscriptionNumber": "SUB-000003",
+      "customerId": "5",
+      "status": "DRAFT",
+      "isOverdue": false,
+      "periodStart": "2026-09-16",
+      "periodEnd": "2027-09-16",
+      "invoiceDate": "2026-10-31",
+      "dueDate": "2026-11-15",
+      "billTo": {
+        "name": "Priya Nair",
+        "email": "ops@bluewave.test",
+        "address": null
+      },
+      "subtotal": "2650.00",
+      "discountTotal": "0.00",
+      "taxTotal": "477.00",
+      "total": "3127.00",
+      "amountPaid": "0.00",
+      "balanceDue": "3127.00",
+      "sentAt": null
+    },
+    {
+      "id": "2",
+      "number": "INV-000002",
+      "subscriptionId": "2",
+      "subscriptionNumber": "SUB-000002",
+      "customerId": "4",
+      "status": "DRAFT",
+      "isOverdue": false,
+      "periodStart": "2026-10-19",
+      "periodEnd": "2026-11-19",
+      "invoiceDate": "2026-10-31",
+      "dueDate": "2026-11-15",
+      "billTo": {
+        "name": "Globex Finance",
+        "email": "customer2@globex.test",
+        "address": "Unit 12, Hiranandani Business Park, Powai, Mumbai 400076"
+      },
+      "subtotal": "4400.00",
+      "discountTotal": "0.00",
+      "taxTotal": "792.00",
+      "total": "5192.00",
+      "amountPaid": "0.00",
+      "balanceDue": "5192.00",
+      "sentAt": null
+    },
+    {
+      "id": "1",
+      "number": "INV-000001",
+      "subscriptionId": "1",
+      "subscriptionNumber": "SUB-000001",
+      "customerId": "3",
+      "status": "DRAFT",
+      "isOverdue": false,
+      "periodStart": "2026-10-01",
+      "periodEnd": "2026-11-01",
+      "invoiceDate": "2026-10-31",
+      "dueDate": "2026-11-15",
+      "billTo": {
+        "name": "Acme Ops",
+        "email": "customer@acme.test",
+        "address": "4th Floor, Prestige Tower, MG Road, Bengaluru 560001"
+      },
+      "subtotal": "7800.00",
+      "discountTotal": "780.00",
+      "taxTotal": "1263.60",
+      "total": "8283.60",
+      "amountPaid": "0.00",
+      "balanceDue": "8283.60",
+      "sentAt": null
+    }
+  ],
+  "page": 1,
+  "pageSize": 25,
+  "total": 3
+}

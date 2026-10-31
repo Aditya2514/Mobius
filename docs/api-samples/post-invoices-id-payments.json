@@ -1,0 +1,11 @@
+{
+  "id": "1",
+  "invoiceId": "1",
+  "method": "UPI",
+  "amount": "5000.00",
+  "paidOn": "2026-10-31",
+  "reference": "UPI/987654321/AXIS",
+  "note": "Part payment via UPI",
+  "recordedBy": "2",
+  "createdAt": "2026-10-31T09:03:07.794Z"
+}
