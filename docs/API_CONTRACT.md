@@ -71,14 +71,14 @@ and update this file in the same commit as the code (and MSW mock) change.
 | POST | /invoices/:id/cancel | Admin, Staff | DRAFT, or CONFIRMED with amountPaid 0 → invoice detail. PAID or CANCELLED → 400 INVALID\_TRANSITION; payments recorded → 400 BUSINESS\_RULE. A used discount slot is not returned |
 | POST | /invoices/:id/send | Admin, Staff | Emails PDF; sets sentAt |
 | GET | /invoices/:id/pdf | Scoped | application/pdf |
-| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS\_RULE); the invoice becomes PAID when fully paid |
+| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment. paidOn after today (India date) → 400 VALIDATION\_ERROR on paidOn. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS\_RULE); the invoice becomes PAID when fully paid |
 | GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= (from/to filter paidOn) → [{ id, invoiceId, invoiceNumber, method, amount, paidOn, reference, note, createdAt, recordedBy: { id, name } }]; recordedBy is omitted for customers |
 | POST | /billing/run | Admin | { date? } (default today, India date; a future date → 400) → { invoicesCreated, closed, errors: [{ subscriptionId, message }] } |
 | GET | /billing/runs | Admin | Paginated, newest first: [{ id, runDate, startedAt, finishedAt, invoicesCreated, subscriptionsClosed, errors, triggeredBy: { id, name } \| null }]; triggeredBy null = scheduler |
-| GET | /reports/summary | Admin, Staff | Dashboard cards |
-| GET | /reports/revenue | Admin, Staff | ?from=&to= → \[{ month, amount }\] |
-| GET | /reports/overdue | Admin, Staff | Paginated overdue invoices + daysOverdue |
-| GET | /reports/subscriptions-by-plan | Admin, Staff | \[{ planId, planName, active, mrr }\] |
+| GET | /reports/summary | Admin, Staff | Dashboard cards (shape below). mrr = the sum of subscriptions-by-plan mrr, so card and chart match |
+| GET | /reports/revenue | Admin, Staff | ?from=&to= (default: last 12 months incl. this one; max 36 months) → [{ month: "2026-10", amount }], payments received per month, empty months as "0.00" |
+| GET | /reports/overdue | Admin, Staff | Paginated, oldest due first: [{ id, number, customerId, subscriptionNumber, billToName, dueDate, daysOverdue, total, amountPaid, balanceDue }] |
+| GET | /reports/subscriptions-by-plan | Admin, Staff | [{ planId, planName, billingPeriod, active, mrr }], every plan (active 0 included). mrr = active line amounts per month before discount and tax: yearly ÷ 12, weekly × 52 ÷ 12, daily × 365 ÷ 12 |
 
 **Transition actions:** send\_quote, confirm, revise, activate, pause, resume, close, renew, cancel. Customers may only call pause, resume and close, and only if the plan allows. renew appears in allowedActions only when the plan is renewable and the subscription has an expiry date.
 

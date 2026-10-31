@@ -18,6 +18,7 @@ npm run db:migrate                   # apply migrations to the dev DB
 DATABASE_URL=postgresql://app:app@localhost:5433/subs_test npx prisma migrate deploy   # test DB
 npm run db:generate                  # Prisma client
 npm run db:seed                      # WIPES the dev DB, loads demo data
+npm run db:seed:big                  # WIPES the dev DB: demo data + 5,000 subscriptions, 6 months of billing (~4 min)
 npm run dev                          # http://localhost:4000/api/v1/health
 npm test
 ```

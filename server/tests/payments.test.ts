@@ -1,6 +1,8 @@
+import { addDays } from 'date-fns';
 import request from 'supertest';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../src/app';
+import { todayIST, toISODate } from '../src/lib/dates';
 import { billOne } from '../src/modules/billing/engine';
 import { prisma, resetDb } from './helpers/db';
 import {
@@ -89,6 +91,19 @@ describe('recording payments (section 7)', () => {
     expect((await pay(inv.id, '3283.61')).status).toBe(400);
     expect(await prisma.payments.count()).toBe(1);
     expect((await invoice(inv.id)).body).toMatchObject({ status: 'CONFIRMED', amountPaid: '5000.00' });
+  });
+
+  it('a payment dated after today (India date) → 400 on paidOn; earlier dates are fine', async () => {
+    const inv = await billedInvoice();
+    await confirm(inv.id);
+    const tomorrow = toISODate(addDays(todayIST(), 1));
+    const res = await request(app).post(`${api}/invoices/${inv.id}/payments`).set(bearer(c.staff))
+      .send({ method: 'UPI', amount: '100', paidOn: tomorrow });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatchObject({ code: 'VALIDATION_ERROR', details: { field: 'paidOn' } });
+    const today = await request(app).post(`${api}/invoices/${inv.id}/payments`).set(bearer(c.staff))
+      .send({ method: 'UPI', amount: '100', paidOn: toISODate(todayIST()) });
+    expect(today.status).toBe(201);
   });
 
   it('#15 payment on a DRAFT invoice → 400', async () => {

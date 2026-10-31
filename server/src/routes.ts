@@ -10,6 +10,7 @@ import discountRoutes from './modules/discounts/discount.routes';
 import paymentRoutes from './modules/payments/payment.routes';
 import planRoutes from './modules/plans/plan.routes';
 import templateRoutes from './modules/quotations/template.routes';
+import reportRoutes from './modules/reports/report.routes';
 import subscriptionRoutes from './modules/subscriptions/subscription.routes';
 import userRoutes from './modules/users/user.routes';
 
@@ -33,3 +34,4 @@ routes.use(discountRoutes);
 routes.use(invoiceRoutes);
 routes.use(billingRoutes);
 routes.use(paymentRoutes);
+routes.use(reportRoutes);

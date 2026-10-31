@@ -14,6 +14,7 @@ import { subDays } from 'date-fns';
 import Decimal from 'decimal.js';
 import { existsSync } from 'node:fs';
 import { todayIST } from '../src/lib/dates';
+import { printBigSummary, seedBig } from './seed-big';
 
 if (existsSync('.env')) process.loadEnvFile('.env');
 const prisma = new PrismaClient();
@@ -32,7 +33,8 @@ async function wipe() {
   await prisma.$executeRawUnsafe('ALTER SEQUENCE invoice_number_seq RESTART WITH 1');
 }
 
-async function seedSmall() {
+/** Accounts, catalog, plans, templates and the 10 demo customers. */
+async function seedBase() {
   const hash = await bcrypt.hash(DEMO_PASSWORD, 12);
 
   // ---------- the 4 demo accounts (Backend Blueprint section 8) ----------
@@ -126,16 +128,7 @@ async function seedSmall() {
     },
   });
 
-  // ---------- discount ----------
-  await prisma.discounts.create({
-    data: {
-      name: 'Seats 10%', type: 'PERCENTAGE', value: '10', scope: 'PRODUCT', min_quantity: 5,
-      start_date: d('2026-10-01'), usage_limit: 100, created_by: admin.id,
-      discount_products: { create: [{ product_id: crm.id }] },
-    },
-  });
-
-  // ---------- 10 customers, one ACTIVE subscription each ----------
+  // ---------- 10 demo customers (their subscriptions come last) ----------
   const more = [
     ['Priya Nair', 'Tata Bluewave Logistics', 'ops@bluewave.test'],
     ['Arjun Shah', 'Sahyadri Agro Exports', 'accounts@sahyadri.test'],
@@ -155,6 +148,29 @@ async function seedSmall() {
     );
   }
 
+  return {
+    hash, admin, staff, acme, globex, customers, gst5, gst12, gst18,
+    crm, odoo, zoho, helpdesk, analytics, storage, training, scanner,
+    plans: { daily, weekly, monthly, yearly },
+  };
+}
+export type Base = Awaited<ReturnType<typeof seedBase>>;
+
+/** "Seats 10%": PERCENTAGE 10 on CRM Pro, at least 5 seats, 100 uses. */
+async function seedDiscount({ admin, crm }: Base) {
+  await prisma.discounts.create({
+    data: {
+      name: 'Seats 10%', type: 'PERCENTAGE', value: '10', scope: 'PRODUCT', min_quantity: 5,
+      start_date: d('2026-10-01'), usage_limit: 100, created_by: admin.id,
+      discount_products: { create: [{ product_id: crm.id }] },
+    },
+  });
+}
+
+/** One ACTIVE subscription per demo customer, started 3–50 days ago and not billed yet: the first run catches them up. */
+async function seedDemoSubscriptions(b: Base) {
+  const { acme, globex, customers, staff, gst12, gst18, crm, odoo, zoho, helpdesk, analytics, storage, training, scanner } = b;
+  const { daily, weekly, monthly, yearly } = b.plans;
   const unitPrice = (sales: Decimal.Value, extra: Decimal.Value = 0) => new Decimal(sales).plus(extra).toFixed(2);
   type Line = { product_id: bigint; variant_id?: bigint; quantity: number; unit_price: string; tax_id: bigint };
   const crmOdoo = (qty: number): Line => ({ product_id: crm.id, variant_id: odoo.id, quantity: qty, unit_price: unitPrice(1000, 560), tax_id: gst18.id });
@@ -189,21 +205,36 @@ async function seedSmall() {
     });
   }
 
-  return { users: 4 + more.length, products: 6, plans: 4, templates: 2, subscriptions: subs.length };
+  return subs.length;
+}
+
+async function seedSmall() {
+  const base = await seedBase();
+  await seedDiscount(base);
+  const subscriptions = await seedDemoSubscriptions(base);
+  return { users: 4 + base.customers.length - 2, products: 6, plans: 4, templates: 2, subscriptions };
 }
 
 async function main() {
   if (process.env.NODE_ENV === 'production' && process.env.SEED_FORCE !== 'true') {
     throw new Error('Refusing to wipe a production database (set SEED_FORCE=true if you really mean it)');
   }
-  if (process.env.SEED_SIZE === 'big') {
-    throw new Error('The big seed (5,000 subscriptions) arrives in Phase 3, prompt 7');
-  }
+  const big = process.env.SEED_SIZE === 'big';
   const url = new URL(process.env.DATABASE_URL ?? '');
-  console.log(`Seeding ${url.host}${url.pathname} (all existing data is removed)...`);
+  console.log(`Seeding ${big ? 'BIG' : 'small'} data into ${url.host}${url.pathname} (all existing data is removed)...`);
+  const started = Date.now();
   await wipe();
-  const counts = await seedSmall();
-  console.log('Done:', counts);
+  if (big) {
+    const base = await seedBase();
+    // bulk history first, so the backfill can't touch the demo subscriptions or use Seats 10% slots
+    await seedBig(prisma, base);
+    await seedDiscount(base);
+    await seedDemoSubscriptions(base);
+    await printBigSummary(prisma, started);
+  } else {
+    const counts = await seedSmall();
+    console.log(`Done in ${((Date.now() - started) / 1000).toFixed(1)} s:`, counts);
+  }
   console.log(`Log in as admin@brightloop.test / staff@brightloop.test / customer@acme.test / customer2@globex.test, password ${DEMO_PASSWORD}`);
 }
 
