@@ -64,7 +64,7 @@ export default function MyInvoiceDetailPage() {
         </Button>
       </Box>
 
-      <Card sx={{ p: { xs: 2.5, sm: 4 }, border: '1px solid #e2e8f0', borderRadius: 3 }}>
+      <Card sx={{ p: { xs: 2.5, sm: 4 }, border: '1px solid rgba(255,255,255,0.10)', borderRadius: 3 }}>
         {/* Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
           <Box>
@@ -94,7 +94,7 @@ export default function MyInvoiceDetailPage() {
 
         {/* Lines Snapshot */}
         <Table size="small" sx={{ mb: 3 }}>
-          <TableHead sx={{ bgcolor: '#f8fafc' }}>
+          <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 600 }}>Item Description</TableCell>
               <TableCell align="center" sx={{ fontWeight: 600 }}>

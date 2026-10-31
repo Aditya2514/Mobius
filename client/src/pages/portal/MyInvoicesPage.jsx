@@ -37,9 +37,9 @@ export default function MyInvoicesPage() {
       </Box>
 
       {invoiceList.length > 0 ? (
-        <Card sx={{ border: '1px solid #e2e8f0', borderRadius: 3 }}>
+        <Card sx={{ border: '1px solid rgba(255,255,255,0.10)', borderRadius: 3 }}>
           <Table>
-            <TableHead sx={{ bgcolor: '#f8fafc' }}>
+            <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Invoice #</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Invoice Date</TableCell>

@@ -95,7 +95,7 @@ export default function TaxesPage() {
       <Card sx={{ maxWidth: 800 }}>
         <CardContent sx={{ p: 0 }}>
           <Table>
-            <TableHead sx={{ bgcolor: '#f8fafc' }}>
+            <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Tax Name</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 600 }}>

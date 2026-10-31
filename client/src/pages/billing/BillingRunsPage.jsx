@@ -119,7 +119,7 @@ export default function BillingRunsPage() {
       />
 
       {/* Manual Trigger Card */}
-      <Card sx={{ mb: 4, bgcolor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+      <Card sx={{ mb: 4, bgcolor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.10)' }}>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h6" fontWeight={700} gutterBottom>
             Manual Billing Run Trigger

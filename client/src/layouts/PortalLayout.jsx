@@ -42,14 +42,15 @@ export default function PortalLayout() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default' }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'transparent' }}>
       {/* Top Customer Navigation Bar */}
       <AppBar
         position="static"
         elevation={0}
         sx={{
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #e2e8f0',
+          backgroundColor: 'rgba(8,8,14,0.6)',
+          backdropFilter: 'blur(18px)',
+          borderBottom: '1px solid rgba(255,255,255,0.10)',
           color: 'text.primary',
         }}
       >
@@ -68,7 +69,8 @@ export default function PortalLayout() {
                   width: 36,
                   height: 36,
                   borderRadius: 2,
-                  backgroundColor: 'primary.main',
+                  background: 'linear-gradient(135deg, rgba(147,51,234,0.55), rgba(236,72,153,0.35))',
+                  border: '1px solid rgba(192,132,252,0.4)',
                   color: '#ffffff',
                 }}
               >

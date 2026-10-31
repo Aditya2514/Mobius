@@ -83,7 +83,7 @@ export default function MySubscriptionsPage() {
 
             return (
               <Grid item xs={12} key={sub.id}>
-                <Card sx={{ border: '1px solid #e2e8f0', borderRadius: 3 }}>
+                <Card sx={{ border: '1px solid rgba(255,255,255,0.10)', borderRadius: 3 }}>
                   <CardContent sx={{ p: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                       <Box>

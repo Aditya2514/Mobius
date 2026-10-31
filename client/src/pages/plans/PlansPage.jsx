@@ -84,25 +84,25 @@ export default function PlansPage() {
           <Tooltip title={p.row.isPausable ? 'Can be Paused' : 'Cannot be Paused'}>
             <PauseCircleOutlineIcon
               fontSize="small"
-              sx={{ color: p.row.isPausable ? 'warning.main' : '#cbd5e1' }}
+              sx={{ color: p.row.isPausable ? 'warning.main' : 'rgba(255,255,255,0.28)' }}
             />
           </Tooltip>
           <Tooltip title={p.row.isClosable ? 'Can be Closed early' : 'Lock-in (Cannot close early)'}>
             <CancelOutlinedIcon
               fontSize="small"
-              sx={{ color: p.row.isClosable ? 'error.main' : '#cbd5e1' }}
+              sx={{ color: p.row.isClosable ? 'error.main' : 'rgba(255,255,255,0.28)' }}
             />
           </Tooltip>
           <Tooltip title={p.row.isRenewable ? 'Auto-renewable' : 'Non-renewable'}>
             <AutorenewOutlinedIcon
               fontSize="small"
-              sx={{ color: p.row.isRenewable ? 'success.main' : '#cbd5e1' }}
+              sx={{ color: p.row.isRenewable ? 'success.main' : 'rgba(255,255,255,0.28)' }}
             />
           </Tooltip>
           <Tooltip title={p.row.autoClose ? 'Auto-closes upon expiry' : 'Does not auto-close'}>
             <TimerOffOutlinedIcon
               fontSize="small"
-              sx={{ color: p.row.autoClose ? 'info.main' : '#cbd5e1' }}
+              sx={{ color: p.row.autoClose ? 'info.main' : 'rgba(255,255,255,0.28)' }}
             />
           </Tooltip>
         </Box>

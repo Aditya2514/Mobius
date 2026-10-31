@@ -78,7 +78,7 @@ export default function ProfilePage() {
         </Typography>
       </Box>
 
-      <Card sx={{ maxWidth: 700, border: '1px solid #e2e8f0', borderRadius: 3 }}>
+      <Card sx={{ maxWidth: 700, border: '1px solid rgba(255,255,255,0.10)', borderRadius: 3 }}>
         <CardContent sx={{ p: 4 }}>
           <Box
             component="form"

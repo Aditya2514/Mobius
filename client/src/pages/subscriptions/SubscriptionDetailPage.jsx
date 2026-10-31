@@ -350,7 +350,7 @@ export default function SubscriptionDetailPage() {
 
               {/* Lines Table */}
               <Table size="small">
-                <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 600 }}>Product</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 600 }}>
@@ -406,7 +406,7 @@ export default function SubscriptionDetailPage() {
               </Table>
 
               {/* Server Preview Totals Box */}
-              <Box sx={{ mt: 3, p: 2, bgcolor: '#f8fafc', borderRadius: 2, border: '1px solid #e2e8f0' }}>
+              <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255,255,255,0.04)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.10)' }}>
                 <Typography variant="caption" color="text.secondary" fontWeight={600} display="block" mb={1}>
                   ESTIMATED RECURRING PREVIEW (PER BILLING PERIOD)
                 </Typography>
@@ -631,7 +631,7 @@ export default function SubscriptionDetailPage() {
                     <Typography variant="caption" color="text.secondary">
                       AGREEMENT NOTES
                     </Typography>
-                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', bgcolor: '#f8fafc', p: 1, borderRadius: 1 }}>
+                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', bgcolor: 'rgba(255,255,255,0.04)', p: 1, borderRadius: 1 }}>
                       {sub.notes}
                     </Typography>
                   </Box>

@@ -222,7 +222,7 @@ export default function InvoiceDetailPage() {
 
             {/* Snapshot Line Items */}
             <Table size="small" sx={{ mb: 3 }}>
-              <TableHead sx={{ bgcolor: '#f8fafc' }}>
+              <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>Item Description</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 600 }}>
@@ -341,9 +341,9 @@ export default function InvoiceDetailPage() {
                       key={p.id}
                       sx={{
                         p: 1.5,
-                        bgcolor: '#f8fafc',
+                        bgcolor: 'rgba(255,255,255,0.04)',
                         borderRadius: 2,
-                        border: '1px solid #e2e8f0',
+                        border: '1px solid rgba(255,255,255,0.10)',
                       }}
                     >
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
