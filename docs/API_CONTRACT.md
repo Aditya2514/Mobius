@@ -44,16 +44,16 @@ and update this file in the same commit as the code (and MSW mock) change.
 | PATCH | /users/:id | Admin | Edit, deactivate |
 | GET / POST | /customers | Admin, Staff | List ?q=&active= / create { email, fullName, password?, companyName?, phone?, address?, gstin? }; no password → customer is emailed a set-password link |
 | GET / PATCH | /customers/:id | Admin, Staff | One customer |
-| GET / POST | /taxes | Read all; write Admin | Tax rules |
-| PATCH / DELETE | /taxes/:id | Admin | Edit / deactivate |
-| GET / POST | /products | Read all; write Admin | ?q=&type=&active= |
-| GET / PATCH / DELETE | /products/:id | Read all; write Admin | Includes variants |
+| GET / POST | /taxes | Read all; write Admin | ?q=&active=; customers see active only. POST { name, rate, isActive? } |
+| PATCH / DELETE | /taxes/:id | Admin | Edit / DELETE deactivates (204); duplicate name → 409 |
+| GET / POST | /products | Read all; write Admin | ?q=&type=&active=; customers see active only. POST may include variants: [{ attribute, value, extraPrice }] |
+| GET / PATCH / DELETE | /products/:id | Read all; write Admin | Includes variants; DELETE deactivates (204) |
 | POST | /products/:id/variants | Admin | { attribute, value, extraPrice } |
-| PATCH / DELETE | /variants/:id | Admin |  |
-| GET / POST | /plans | Read all; write Admin | ?active=&available=true |
-| GET / PATCH | /plans/:id | Read all; write Admin |  |
-| GET / POST | /quotation-templates | Read Admin, Staff; write Admin | Template + lines |
-| GET / PATCH / DELETE | /quotation-templates/:id | Admin |  |
+| PATCH / DELETE | /variants/:id | Admin | Duplicate attribute+value → 409; DELETE of a variant in use → 409 |
+| GET / POST | /plans | Read all; write Admin | ?q=&billingPeriod=&active=&available=true (available = active and today's India date in range); customers always get available only |
+| GET / PATCH | /plans/:id | Read all; write Admin | billingPeriod can't change once subscriptions use the plan (400) |
+| GET / POST | /quotation-templates | Read Admin, Staff; write Admin | ?q=&planId=; list items have lineCount, no lines. POST { name, planId, validityDays, paymentTermsDays?, notes?, lines: [{ productId, variantId?, quantity, unitPrice?, taxId? }] }; quantity below plan minimum → 400 BUSINESS\_RULE |
+| GET / PATCH / DELETE | /quotation-templates/:id | Read Admin, Staff; write Admin | PATCH lines replaces all lines; DELETE of a template subscriptions came from → 409 |
 | GET | /subscriptions | Admin, Staff, Customer (own) | ?status=&customerId=&planId=&from=&to=&q= |
 | POST | /subscriptions | Admin, Staff | { customerId, planId, startDate, expiryDate?, paymentTermsDays?, templateId?, lines? } → DRAFT |
 | GET / PATCH | /subscriptions/:id | Scoped | Header fields editable in DRAFT or QUOTATION only |
@@ -103,6 +103,18 @@ and update this file in the same commit as the code (and MSW mock) change.
 { "id": "1", "name": "CRM Pro", "type": "SERVICE", "salesPrice": "1000.00", "costPrice": "400.00",
   "defaultTax": { "id": "1", "name": "GST 18%", "rate": "18.00" }, "notes": "", "isActive": true,
   "variants": [ { "id": "1", "attribute": "Brand", "value": "Odoo", "extraPrice": "560.00" } ] }
+
+// Tax
+{ "id": "1", "name": "GST 18%", "rate": "18.00", "isActive": true, "createdAt": "2026-10-31T07:00:00.000Z" }
+
+// Quotation template detail (list items: same without lines, plus "lineCount": 1)
+{ "id": "1", "name": "CRM Pro: 5 seats (Odoo)", "validityDays": 30, "paymentTermsDays": 15, "notes": null,
+  "createdAt": "2026-10-31T07:00:00.000Z",
+  "plan": { "id": "3", "name": "CRM Monthly", "billingPeriod": "MONTHLY", "minQuantity": 1 },
+  "lines": [ { "id": "1", "product": { "id": "1", "name": "CRM Pro" },
+               "variant": { "id": "1", "attribute": "Brand", "value": "Odoo", "extraPrice": "560.00" },
+               "quantity": 5, "unitPrice": null, "tax": { "id": "1", "name": "GST 18%", "rate": "18.00" } } ] }
+// unitPrice null = product price + variant extra, taken when the subscription line is created
 
 // Plan
 { "id": "3", "name": "CRM Monthly", "price": "1000.00", "billingPeriod": "MONTHLY", "minQuantity": 1,

@@ -25,3 +25,9 @@ export class AppError extends Error {
 }
 
 export const notFound = (what = 'Resource') => new AppError(404, 'NOT_FOUND', `${what} not found`);
+
+/** Prisma's error code (P2002 unique, P2003 foreign key, P2025 not found), if this is a Prisma error. */
+export function prismaCode(e: unknown): string | undefined {
+  const code = (e as { code?: unknown } | null)?.code;
+  return typeof code === 'string' && /^P\d{4}$/.test(code) ? code : undefined;
+}

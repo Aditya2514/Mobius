@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Decimal } from './money';
 
 /** :id path param. IDs are BIGINT, sent as digit strings. Convert with BigInt() in the controller. */
 export const idParam = z.object({ id: z.string().regex(/^[1-9]\d{0,18}$/, 'Invalid id') });
@@ -30,3 +31,9 @@ export const moneyString = z
 
 /** ?flag=true|false */
 export const boolQuery = z.enum(['true', 'false']).transform((v) => v === 'true');
+
+/** Percentage 0–100 with at most 2 decimals, kept as a string (e.g. tax rates). */
+export const percentString = z
+  .union([z.string().trim(), z.number()])
+  .transform((v) => String(v))
+  .refine((s) => /^\d{1,3}(\.\d{1,2})?$/.test(s) && new Decimal(s).lte(100), 'Must be between 0 and 100');
