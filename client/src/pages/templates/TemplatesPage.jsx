@@ -50,13 +50,15 @@ export default function TemplatesPage() {
       renderCell: (p) => `${p.value} days net`,
     },
     {
-      field: 'lines',
+      field: 'lineCount',
       headerName: 'Preset Lines',
       width: 130,
+      sortable: false,
       renderCell: (p) => {
-        const count = p.value?.length || 0;
+        // the list endpoint sends lineCount (the lines themselves only come with one template)
+        const count = Number(p.value ?? p.row.lines?.length ?? 0);
         return (
-          <Chip size="small" label={`${count} line${count > 1 ? 's' : ''}`} variant="outlined" />
+          <Chip size="small" label={`${count} line${count === 1 ? '' : 's'}`} variant="outlined" />
         );
       },
     },
