@@ -11,4 +11,7 @@ export async function resetDb() {
       discount_products, discounts, subscription_status_history, subscription_lines, subscriptions,
       quotation_template_lines, quotation_templates, plans, product_variants, products, taxes,
       password_reset_tokens, refresh_tokens, billing_runs, users RESTART IDENTITY CASCADE`);
+  // SUB-/INV- numbers come from standalone sequences that RESTART IDENTITY does not reset
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE subscription_number_seq RESTART WITH 1');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE invoice_number_seq RESTART WITH 1');
 }

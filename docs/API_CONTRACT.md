@@ -54,13 +54,13 @@ and update this file in the same commit as the code (and MSW mock) change.
 | GET / PATCH | /plans/:id | Read all; write Admin | billingPeriod can't change once subscriptions use the plan (400) |
 | GET / POST | /quotation-templates | Read Admin, Staff; write Admin | ?q=&planId=; list items have lineCount, no lines. POST { name, planId, validityDays, paymentTermsDays?, notes?, lines: [{ productId, variantId?, quantity, unitPrice?, taxId? }] }; quantity below plan minimum → 400 BUSINESS\_RULE |
 | GET / PATCH / DELETE | /quotation-templates/:id | Read Admin, Staff; write Admin | PATCH lines replaces all lines; DELETE of a template subscriptions came from → 409 |
-| GET | /subscriptions | Admin, Staff, Customer (own) | ?status=&customerId=&planId=&from=&to=&q= |
-| POST | /subscriptions | Admin, Staff | { customerId, planId, startDate, expiryDate?, paymentTermsDays?, templateId?, lines? } → DRAFT |
-| GET / PATCH | /subscriptions/:id | Scoped | Header fields editable in DRAFT or QUOTATION only |
-| POST | /subscriptions/:id/lines | Admin, Staff | { productId, variantId?, quantity, unitPrice?, taxId? } |
-| PATCH / DELETE | /subscriptions/:id/lines/:lineId | Admin, Staff | DRAFT or QUOTATION only |
-| POST | /subscriptions/:id/transition | Scoped | { action } → updated subscription |
-| GET | /subscriptions/:id/history | Admin, Staff | Status history |
+| GET | /subscriptions | Admin, Staff, Customer (own) | ?status=&customerId=&planId=&from=&to=&q= (from/to filter startDate; q matches number, customer name, company or email). recurringTotal = preview total |
+| POST | /subscriptions | Admin, Staff | { customerId, planId, startDate, expiryDate?, paymentTermsDays?, templateId?, lines?, notes? } → 201 DRAFT detail. No lines + templateId = copy the template's lines and payment terms. Plan must be available today (else 400 BUSINESS\_RULE) |
+| GET / PATCH | /subscriptions/:id | GET scoped; PATCH Admin, Staff | PATCH { planId?, startDate?, expiryDate?, paymentTermsDays?, notes? } in DRAFT or QUOTATION only (else 400 INVALID\_TRANSITION); status is never set by PATCH |
+| POST | /subscriptions/:id/lines | Admin, Staff | { productId, variantId?, quantity, unitPrice?, taxId? } → 201 subscription detail. unitPrice omitted = product price + variant extra; taxId omitted = product default, null = no tax |
+| PATCH / DELETE | /subscriptions/:id/lines/:lineId | Admin, Staff | DRAFT or QUOTATION only; both return the subscription detail (fresh preview). PATCH keeps the agreed unitPrice unless a new one is sent or the variant changes |
+| POST | /subscriptions/:id/transition | Scoped | { action } → updated subscription detail. Not allowed from this status → 400 INVALID\_TRANSITION with details.allowed; plan forbids it → 400 BUSINESS\_RULE; customer calling a staff action → 403 |
+| GET | /subscriptions/:id/history | Admin, Staff | Paginated, oldest first: [{ id, fromStatus, toStatus, changedBy: { id, name } \| null, changedAt }]; changedBy null = billing job |
 | POST | /subscriptions/:id/invoice | Admin, Staff | Bill this subscription now |
 | GET / POST | /discounts | Read Admin, Staff; write Admin | { name, type, value, scope, minPurchase, minQuantity, startDate, endDate?, usageLimit?, productIds?, subscriptionIds? } |
 | GET / PATCH | /discounts/:id | Read Admin, Staff; write Admin | Shows usedCount |
@@ -80,7 +80,7 @@ and update this file in the same commit as the code (and MSW mock) change.
 | GET | /reports/overdue | Admin, Staff | Paginated overdue invoices + daysOverdue |
 | GET | /reports/subscriptions-by-plan | Admin, Staff | \[{ planId, planName, active, mrr }\] |
 
-**Transition actions:** send\_quote, confirm, revise, activate, pause, resume, close, renew, cancel. Customers may only call pause, resume and close, and only if the plan allows.
+**Transition actions:** send\_quote, confirm, revise, activate, pause, resume, close, renew, cancel. Customers may only call pause, resume and close, and only if the plan allows. renew appears in allowedActions only when the plan is renewable and the subscription has an expiry date.
 
 **Response shapes**
 
@@ -127,8 +127,13 @@ and update this file in the same commit as the code (and MSW mock) change.
   "status": "ACTIVE", "startDate": "2026-11-01", "expiryDate": null,
   "nextBillingDate": "2026-12-01", "recurringTotal": "8283.60" }
 
-// Subscription detail = list item +
-{ "paymentTermsDays": 15, "quotationValidUntil": null, "notes": "",
+// Subscription detail = list item, with customer and plan expanded:
+//   "customer": { "id", "name", "email", "companyName" },
+//   "plan": { "id", "name", "billingPeriod", "minQuantity", "isPausable", "isClosable", "isRenewable", "autoClose" }
+// plus:
+{ "template": { "id": "1", "name": "CRM Pro: 5 seats (Odoo)" }, "pausedAt": null, "closedAt": null,
+  "createdAt": "2026-10-31T07:00:00.000Z",
+  "paymentTermsDays": 15, "quotationValidUntil": null, "notes": "",
   "allowedActions": ["pause", "close", "renew"],
   "lines": [ { "id": "91", "product": { "id": "1", "name": "CRM Pro" },
                "variant": { "id": "1", "attribute": "Brand", "value": "Odoo" },

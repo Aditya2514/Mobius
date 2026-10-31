@@ -8,6 +8,7 @@ import customerRoutes from './modules/customers/customer.routes';
 import discountRoutes from './modules/discounts/discount.routes';
 import planRoutes from './modules/plans/plan.routes';
 import templateRoutes from './modules/quotations/template.routes';
+import subscriptionRoutes from './modules/subscriptions/subscription.routes';
 import userRoutes from './modules/users/user.routes';
 
 /** Mounted at /api/v1. Each module router declares its own full paths. */
@@ -25,5 +26,6 @@ routes.use(productRoutes);
 routes.use(variantRoutes);
 routes.use(planRoutes);
 routes.use(templateRoutes);
+routes.use(subscriptionRoutes);
 routes.use(discountRoutes);
 routes.use(invoiceRoutes);
