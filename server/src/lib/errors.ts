@@ -8,6 +8,7 @@ export type ErrorCode =
   | 'INVALID_TRANSITION'
   | 'BUSINESS_RULE'
   | 'CONFLICT'
+  | 'RATE_LIMITED'
   | 'INTERNAL_ERROR';
 
 /** Any error the API sends on purpose. errorHandler turns it into { error: { code, message, details } }. */

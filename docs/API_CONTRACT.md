@@ -16,9 +16,9 @@ and update this file in the same commit as the code (and MSW mock) change.
 | Dates | "YYYY-MM-DD"; timestamps ISO 8601 UTC |
 | Lists | ?page=1&pageSize=25 (max 100)&sort=field or -field → { data, page, pageSize, total } |
 | Errors | { error: { code, message, details? } } |
-| Status codes | 200 OK, 201 created, 204 no body, 400 validation or rule, 401 not logged in, 403 wrong role, 404 not found or not yours, 409 conflict |
+| Status codes | 200 OK, 201 created, 204 no body, 400 validation or rule, 401 not logged in, 403 wrong role, 404 not found or not yours, 409 conflict, 429 too many attempts (login, forgot, reset: 5/min per IP) |
 
-**Error codes:** VALIDATION\_ERROR, INVALID\_CREDENTIALS, EMAIL\_TAKEN, UNAUTHENTICATED, FORBIDDEN, NOT\_FOUND, INVALID\_TRANSITION, BUSINESS\_RULE, CONFLICT.
+**Error codes:** VALIDATION\_ERROR, INVALID\_CREDENTIALS, EMAIL\_TAKEN, UNAUTHENTICATED, FORBIDDEN, NOT\_FOUND, INVALID\_TRANSITION, BUSINESS\_RULE, CONFLICT, RATE\_LIMITED. Validation errors carry details { field, issues: [{ field, message }] }.
 
 **Endpoints**
 
@@ -28,12 +28,12 @@ and update this file in the same commit as the code (and MSW mock) change.
 | POST | /auth/login | Public | { email, password } → { accessToken, user } + rt cookie |
 | POST | /auth/refresh | Cookie | → { accessToken, user }; rotates cookie |
 | POST | /auth/logout | Any | Revokes refresh token → 204 |
-| POST | /auth/forgot-password | Public | { email } → always 200 |
-| POST | /auth/reset-password | Public | { token, newPassword } → 200 |
+| POST | /auth/forgot-password | Public | { email } → always 200 { message } |
+| POST | /auth/reset-password | Public | { token, newPassword } → 200 { message }; bad or used token → 400 BUSINESS\_RULE |
 | GET / PATCH | /me | Any | Own profile |
 | GET / POST | /users | Admin | List users ?role= / create staff |
 | PATCH | /users/:id | Admin | Edit, deactivate |
-| GET / POST | /customers | Admin, Staff | List ?q= / create customer account |
+| GET / POST | /customers | Admin, Staff | List ?q=&active= / create { email, fullName, password?, companyName?, phone?, address?, gstin? }; no password → customer is emailed a set-password link |
 | GET / PATCH | /customers/:id | Admin, Staff | One customer |
 | GET / POST | /taxes | Read all; write Admin | Tax rules |
 | PATCH / DELETE | /taxes/:id | Admin | Edit / deactivate |
@@ -54,7 +54,7 @@ and update this file in the same commit as the code (and MSW mock) change.
 | GET | /subscriptions/:id/history | Admin, Staff | Status history |
 | POST | /subscriptions/:id/invoice | Admin, Staff | Bill this subscription now |
 | GET / POST | /discounts | Read Admin, Staff; write Admin | { name, type, value, scope, minPurchase, minQuantity, startDate, endDate?, usageLimit?, productIds?, subscriptionIds? } |
-| GET / PATCH | /discounts/:id | Admin | Shows usedCount |
+| GET / PATCH | /discounts/:id | Read Admin, Staff; write Admin | Shows usedCount |
 | GET | /invoices | Admin, Staff, Customer (own) | ?status=&overdue=true&customerId=&subscriptionId=&from=&to=&q= |
 | GET | /invoices/:id | Scoped | Lines + payments |
 | POST | /invoices/:id/confirm | Admin, Staff | DRAFT → CONFIRMED |
@@ -84,7 +84,8 @@ and update this file in the same commit as the code (and MSW mock) change.
 
 // User (login, /me, lists)
 { "id": "1", "email": "admin@brightloop.test", "fullName": "Admin", "role": "ADMIN",
-  "companyName": null, "isActive": true }
+  "companyName": null, "phone": null, "address": null, "gstin": null, "isActive": true,
+  "createdAt": "2026-10-31T07:00:00.000Z" }
 
 // POST /auth/login
 { "accessToken": "eyJ...", "user": { /* User */ } }

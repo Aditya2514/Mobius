@@ -6,6 +6,7 @@ if (existsSync('.env')) process.loadEnvFile('.env');
 export default defineConfig({
   test: {
     include: ['tests/**/*.test.ts'],
+    globalSetup: ['tests/globalSetup.ts'],
     // tests share one database, so run files one at a time
     fileParallelism: false,
     testTimeout: 20_000,
