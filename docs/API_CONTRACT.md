@@ -64,15 +64,15 @@ and update this file in the same commit as the code (and MSW mock) change.
 | POST | /subscriptions/:id/invoice | Admin, Staff | Bill this subscription now (everything due up to today, same engine, idempotent) → { invoicesCreated }; not ACTIVE → 400 BUSINESS\_RULE |
 | GET / POST | /discounts | Read Admin, Staff; write Admin | { name, type, value, scope, minPurchase, minQuantity, startDate, endDate?, usageLimit?, productIds?, subscriptionIds? } |
 | GET / PATCH | /discounts/:id | Read Admin, Staff; write Admin | Shows usedCount |
-| GET | /invoices | Admin, Staff, Customer (own) | ?status=&overdue=true&customerId=&subscriptionId=&from=&to=&q= |
+| GET | /invoices | Admin, Staff, Customer (own) | ?status=&overdue=true\|false&customerId=&subscriptionId=&from=&to=&q= (from/to filter invoiceDate; q matches number, bill-to name or email). Sort: invoiceDate (default -invoiceDate), dueDate, number, total, balanceDue, status |
 | GET | /invoices/:id | Scoped | Lines + payments |
-| POST | /invoices/:id/confirm | Admin, Staff | DRAFT → CONFIRMED |
-| POST | /invoices/bulk-confirm | Admin, Staff | { ids: \[\] } → { confirmed, skipped } |
-| POST | /invoices/:id/cancel | Admin, Staff | DRAFT, or CONFIRMED with amountPaid 0 |
+| POST | /invoices/:id/confirm | Admin, Staff | DRAFT → CONFIRMED → invoice detail. Not DRAFT → 400 INVALID\_TRANSITION; no lines or zero total → 400 BUSINESS\_RULE |
+| POST | /invoices/bulk-confirm | Admin, Staff | { ids: ["1", ...] } (max 500) → { confirmed: ["1", ...], skipped: [{ id, reason }] }; each invoice is confirmed on its own |
+| POST | /invoices/:id/cancel | Admin, Staff | DRAFT, or CONFIRMED with amountPaid 0 → invoice detail. PAID or CANCELLED → 400 INVALID\_TRANSITION; payments recorded → 400 BUSINESS\_RULE. A used discount slot is not returned |
 | POST | /invoices/:id/send | Admin, Staff | Emails PDF; sets sentAt |
 | GET | /invoices/:id/pdf | Scoped | application/pdf |
-| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } |
-| GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= |
+| POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS\_RULE); the invoice becomes PAID when fully paid |
+| GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= (from/to filter paidOn) → [{ id, invoiceId, invoiceNumber, method, amount, paidOn, reference, note, createdAt, recordedBy: { id, name } }]; recordedBy is omitted for customers |
 | POST | /billing/run | Admin | { date? } (default today, India date; a future date → 400) → { invoicesCreated, closed, errors: [{ subscriptionId, message }] } |
 | GET | /billing/runs | Admin | Paginated, newest first: [{ id, runDate, startedAt, finishedAt, invoicesCreated, subscriptionsClosed, errors, triggeredBy: { id, name } \| null }]; triggeredBy null = scheduler |
 | GET | /reports/summary | Admin, Staff | Dashboard cards |
@@ -81,6 +81,8 @@ and update this file in the same commit as the code (and MSW mock) change.
 | GET | /reports/subscriptions-by-plan | Admin, Staff | \[{ planId, planName, active, mrr }\] |
 
 **Transition actions:** send\_quote, confirm, revise, activate, pause, resume, close, renew, cancel. Customers may only call pause, resume and close, and only if the plan allows. renew appears in allowedActions only when the plan is renewable and the subscription has an expiry date.
+
+**expiryDate** is the last day of service, inclusive: a period that starts on the expiry date is still billed; nothing starting after it is. It must be after startDate (400 VALIDATION\_ERROR otherwise); null = open-ended. Auto-close happens on the first billing run after the expiry date.
 
 **Response shapes**
 
@@ -146,7 +148,7 @@ and update this file in the same commit as the code (and MSW mock) change.
   "minPurchase": "0.00", "minQuantity": 5, "startDate": "2026-10-01", "endDate": null,
   "usageLimit": 100, "usedCount": 4, "isActive": true, "productIds": ["1"], "subscriptionIds": [] }
 
-// Invoice detail (list items omit lines and payments)
+// Invoice detail (list items omit lines and payments; both also carry customerId)
 { "id": "501", "number": "INV-000501", "subscriptionId": "42", "subscriptionNumber": "SUB-000042",
   "status": "CONFIRMED", "isOverdue": false,
   "periodStart": "2026-11-01", "periodEnd": "2026-12-01", "invoiceDate": "2026-11-01", "dueDate": "2026-11-16",

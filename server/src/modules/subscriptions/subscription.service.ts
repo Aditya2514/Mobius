@@ -224,9 +224,12 @@ async function resolveLine(tx: Tx, l: LineInput, minQuantity: number, field = ''
   };
 }
 
+/** expiryDate is the last day of service (inclusive), so it must come after the start date. */
 function checkDates(start: string, expiry: string | null | undefined) {
-  if (expiry && expiry < start) {
-    throw new AppError(400, 'VALIDATION_ERROR', 'Expiry date must be on or after the start date', { field: 'expiryDate' });
+  if (expiry && expiry <= start) {
+    throw new AppError(400, 'VALIDATION_ERROR', 'Expiry date (last day of service) must be after the start date', {
+      field: 'expiryDate',
+    });
   }
 }
 

@@ -194,6 +194,15 @@ describe('editing rules', () => {
     expect(res.body.error).toMatchObject({ code: 'BUSINESS_RULE', details: { field: 'lines.0.quantity' } });
   });
 
+  it('expiry is the inclusive last day of service, so it must be after the start date', async () => {
+    const same = await create({ customerId: ctx.acme.id.toString(), planId: ctx.plan.id.toString(), startDate: '2026-11-01', expiryDate: '2026-11-01' });
+    expect(same.status).toBe(400);
+    expect(same.body.error.details.field).toBe('expiryDate');
+    const s = await draftFromTemplate({ expiryDate: '2026-11-30' });
+    const patch = await request(app).patch(`${api}/subscriptions/${s.id}`).set(bearer(ctx.staff)).send({ expiryDate: '2026-10-31' });
+    expect(patch.status).toBe(400);
+  });
+
   it('a plan that is not available today cannot be chosen', async () => {
     const future = await makePlan({ availableFrom: '2099-01-01' });
     const res = await create({ customerId: ctx.acme.id.toString(), planId: future.id.toString(), startDate: '2026-11-01' });

@@ -29,6 +29,8 @@ const schema = z.object({
   // requests per minute per IP on login, forgot-password and reset-password (each counted separately).
   // Keep 5 in production; raise for dev and demos where everyone logs in from one laptop.
   AUTH_RATE_LIMIT: z.coerce.number().int().positive().default(5),
+  // run the daily billing cron in this process; unset = only when NODE_ENV=production
+  ENABLE_SCHEDULER: z.enum(['true', 'false']).optional(),
 });
 
 const parsed = schema.safeParse(process.env);
@@ -38,6 +40,10 @@ if (!parsed.success) {
   throw new Error(`Invalid environment variables:\n${problems}`);
 }
 
-export const env = parsed.data;
+const { ENABLE_SCHEDULER, ...rest } = parsed.data;
+export const env = {
+  ...rest,
+  ENABLE_SCHEDULER: ENABLE_SCHEDULER === undefined ? rest.NODE_ENV === 'production' : ENABLE_SCHEDULER === 'true',
+};
 export const isProd = env.NODE_ENV === 'production';
 export const isTest = env.NODE_ENV === 'test';

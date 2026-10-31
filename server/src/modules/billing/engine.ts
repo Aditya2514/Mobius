@@ -140,7 +140,9 @@ async function chooseAndClaim(
   const claimed = new Set<bigint>();
   for (;;) {
     const applied = selectDiscounts(subscriptionId, lines, rules);
-    const chosen = [...new Set(applied.flatMap((d) => (d ? [d.id] : [])))];
+    // Claim in ascending id order: every run then locks discount rows in the same order, so two
+    // overlapping runs can wait on each other but never deadlock (A holds 1 wants 2, B holds 2 wants 1).
+    const chosen = [...new Set(applied.flatMap((d) => (d ? [d.id] : [])))].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
     let lost: bigint | undefined;
     for (const id of chosen) {
       if (claimed.has(id)) continue;
