@@ -2,7 +2,8 @@
 
 You are building the Subscription Management System described in `docs/BUILD_PLAN.md`.
 That file is the spec. `server/prisma/migrations/0001_init/migration.sql` (= schema.sql) is the database.
-Backend work: also follow `docs/BACKEND_BLUEPRINT.md`. Frontend work: also follow `docs/FRONTEND_BLUEPRINT.md`.
+Backend work: follow `docs/BACKEND_BLUEPRINT.md`. Frontend work: follow `docs/FRONTEND_BLUEPRINT.md`.
+Where a blueprint and BUILD_PLAN.md differ, the blueprint wins (it is newer and has the reviewed fixes).
 When the spec and your idea disagree, follow the spec. If the spec is silent, ask before inventing.
 
 ## Stack (do not change)
