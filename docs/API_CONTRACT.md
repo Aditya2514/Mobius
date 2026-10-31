@@ -18,7 +18,7 @@ and update this file in the same commit as the code (and MSW mock) change.
 | Errors | { error: { code, message, details? } } |
 | Status codes | 200 OK, 201 created, 204 no body, 400 validation or rule, 401 not logged in, 403 wrong role, 404 not found or not yours, 409 conflict, 429 too many attempts (login, forgot, reset: AUTH\_RATE\_LIMIT per minute per IP, 5 in production) |
 
-**Error codes:** VALIDATION\_ERROR, INVALID\_CREDENTIALS, EMAIL\_TAKEN, UNAUTHENTICATED, FORBIDDEN, NOT\_FOUND, INVALID\_TRANSITION, BUSINESS\_RULE, CONFLICT, RATE\_LIMITED.
+**Error codes:** VALIDATION\_ERROR, INVALID\_CREDENTIALS, EMAIL\_TAKEN, UNAUTHENTICATED, FORBIDDEN, NOT\_FOUND, INVALID\_TRANSITION, BUSINESS\_RULE, CONFLICT, RATE\_LIMITED, PDF\_UNAVAILABLE (503).
 
 **Validation error shape (400 VALIDATION\_ERROR from request checks).** `message` and `details.field` are the first problem; `details.fields` lists every problem, with nested paths like `lines.0.quantity`. Errors raised by business rules send only `details.field`.
 
@@ -69,8 +69,9 @@ and update this file in the same commit as the code (and MSW mock) change.
 | POST | /invoices/:id/confirm | Admin, Staff | DRAFT → CONFIRMED → invoice detail. Not DRAFT → 400 INVALID\_TRANSITION; no lines or zero total → 400 BUSINESS\_RULE |
 | POST | /invoices/bulk-confirm | Admin, Staff | { ids: ["1", ...] } (max 500) → { confirmed: ["1", ...], skipped: [{ id, reason }] }; each invoice is confirmed on its own |
 | POST | /invoices/:id/cancel | Admin, Staff | DRAFT, or CONFIRMED with amountPaid 0 → invoice detail. PAID or CANCELLED → 400 INVALID\_TRANSITION; payments recorded → 400 BUSINESS\_RULE. A used discount slot is not returned |
-| POST | /invoices/:id/send | Admin, Staff | Emails PDF; sets sentAt |
-| GET | /invoices/:id/pdf | Scoped | application/pdf |
+| POST | /invoices/:id/send | Admin, Staff | CONFIRMED or PAID only (else 400 BUSINESS\_RULE). Emails the bill-to address with the PDF attached (if no PDF can be made: the invoice as HTML plus a portal link); sets sentAt → invoice detail + pdfAttached |
+| GET | /invoices/:id/pdf | Scoped | application/pdf (A4). Chrome unavailable → 503 PDF\_UNAVAILABLE: use /print |
+| GET | /invoices/:id/print | Scoped | text/html: the same invoice page with print CSS; browser "Save as PDF" works without the server's Chrome |
 | POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } → 201 payment. paidOn after today (India date) → 400 VALIDATION\_ERROR on paidOn. Invoice must be CONFIRMED and amount ≤ balanceDue (else 400 BUSINESS\_RULE); the invoice becomes PAID when fully paid |
 | GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= (from/to filter paidOn) → [{ id, invoiceId, invoiceNumber, method, amount, paidOn, reference, note, createdAt, recordedBy: { id, name } }]; recordedBy is omitted for customers |
 | POST | /billing/run | Admin | { date? } (default today, India date; a future date → 400) → { invoicesCreated, closed, errors: [{ subscriptionId, message }] } |

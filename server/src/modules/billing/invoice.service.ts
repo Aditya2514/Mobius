@@ -1,10 +1,15 @@
 import { Prisma } from '@prisma/client';
+import { env } from '../../config/env';
 import { fromISODate } from '../../lib/dates';
+import { logger } from '../../lib/logger';
+import { sendMail } from '../../lib/mailer';
+import { renderPdf } from '../../lib/pdf';
 import { AppError, notFound } from '../../lib/errors';
 import { toDecimal } from '../../lib/money';
 import { listResult, toPage } from '../../lib/pagination';
 import { prisma } from '../../lib/prisma';
 import { ownScope, type AuthUser } from '../../middleware/auth';
+import { day, money, renderInvoiceHtml } from './invoice.render';
 import type { ListInvoicesQuery } from './invoice.schema';
 
 /** a row of v_invoice_balance (+ subscription number) */
@@ -205,3 +210,54 @@ export async function cancelInvoice(id: bigint, user: AuthUser) {
   });
   return getInvoice(id, user);
 }
+
+// ---------- documents: print, PDF, email ----------
+
+/** Printable HTML (browser Save as PDF works without Puppeteer). Scoped like the detail. */
+export async function invoiceHtml(id: bigint, user: AuthUser) {
+  return renderInvoiceHtml(await getInvoice(id, user));
+}
+
+/** The same page as an A4 PDF via headless Chrome; 503 PDF_UNAVAILABLE if Chrome can't start. */
+export async function invoicePdf(id: bigint, user: AuthUser) {
+  const detail = await getInvoice(id, user);
+  return { number: detail.number, pdf: await renderPdf(renderInvoiceHtml(detail)) };
+}
+
+/**
+ * Email the invoice to its bill-to address, PDF attached. If the PDF can't be made, the email
+ * carries the invoice as HTML plus a link to the portal instead. Sets sent_at.
+ */
+export async function sendInvoice(id: bigint, user: AuthUser) {
+  const detail = await getInvoice(id, user);
+  if (detail.status !== 'CONFIRMED' && detail.status !== 'PAID') {
+    throw new AppError(400, 'BUSINESS_RULE', 'Only confirmed or paid invoices can be sent', { status: detail.status });
+  }
+  const html = renderInvoiceHtml(detail);
+  const balance = money(String(detail.balanceDue));
+  const intro =
+    `Dear ${detail.billTo.name},\n\nPlease find invoice ${detail.number} dated ${day(serializeDate(detail.invoiceDate))}. ` +
+    (detail.status === 'PAID' ? 'It has been paid in full. Thank you!' : `Balance due: ${balance}, by ${day(serializeDate(detail.dueDate))}.`);
+
+  let pdf: Buffer | null = null;
+  try {
+    pdf = await renderPdf(html);
+  } catch (err) {
+    logger.warn({ err, invoiceId: id.toString() }, 'invoice PDF failed; sending the HTML version instead');
+  }
+  const portal = `${env.APP_URL}/portal/invoices`;
+  await sendMail({
+    to: detail.billTo.email,
+    subject: `Invoice ${detail.number} from Brightloop Software`,
+    text: pdf
+      ? `${intro}\n\nThe invoice is attached as a PDF. You can also view it any time at ${portal}.\n`
+      : `${intro}\n\nView or print your invoice at ${portal}.\n`,
+    ...(pdf
+      ? { attachments: [{ filename: `${detail.number}.pdf`, content: pdf, contentType: 'application/pdf' }] }
+      : { html }),
+  });
+  await prisma.invoices.update({ where: { id }, data: { sent_at: new Date() } });
+  return { ...(await getInvoice(id, user)), pdfAttached: pdf !== null };
+}
+
+const serializeDate = (d: Date) => d.toISOString().slice(0, 10);

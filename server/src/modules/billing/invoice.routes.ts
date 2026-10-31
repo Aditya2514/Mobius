@@ -17,4 +17,8 @@ r.post('/invoices/bulk-confirm', auth, requireRole(...TEAM), validate({ body: bu
 r.get('/invoices/:id', auth, requireRole(...ALL), validate({ params: idParam }), ah(ctrl.get));
 r.post('/invoices/:id/confirm', auth, requireRole(...TEAM), validate({ params: idParam }), ah(ctrl.confirm));
 r.post('/invoices/:id/cancel', auth, requireRole(...TEAM), validate({ params: idParam }), ah(ctrl.cancel));
+r.post('/invoices/:id/send', auth, requireRole(...TEAM), validate({ params: idParam }), ah(ctrl.send));
+// documents: customers get their own only (scoped in the service, others → 404)
+r.get('/invoices/:id/print', auth, requireRole(...ALL), validate({ params: idParam }), ah(ctrl.print));
+r.get('/invoices/:id/pdf', auth, requireRole(...ALL), validate({ params: idParam }), ah(ctrl.pdf));
 export default r;

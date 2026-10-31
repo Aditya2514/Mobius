@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{number}} · {{companyName}}</title>
+<style>
+  /* A4, plain CSS, system fonts only. The frontend may restyle this file. */
+  @page { size: A4; margin: 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: #1f2933; font: 10.5pt/1.45 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { max-width: 182mm; margin: 0 auto; padding: 8mm 0; position: relative; }
+  @media screen { body { background: #eef1f4; } .page { background: #fff; padding: 14mm; margin: 8mm auto; box-shadow: 0 1px 6px rgba(0,0,0,.12); } }
+  @media print { .page { padding: 0; } .screen-only { display: none; } }
+
+  header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1f6feb; padding-bottom: 10px; }
+  .brand { font-size: 17pt; font-weight: 700; color: #1f6feb; letter-spacing: -.2px; }
+  .muted { color: #616e7c; }
+  .small { font-size: 9pt; }
+  h1 { margin: 0; font-size: 20pt; font-weight: 300; text-align: right; letter-spacing: 1px; }
+  .meta { margin-top: 4px; text-align: right; }
+  .meta td { padding: 1px 0 1px 12px; }
+  .meta td:first-child { color: #616e7c; }
+
+  .parties { display: flex; gap: 12mm; margin: 14px 0 12px; }
+  .parties > div { flex: 1; }
+  .label { text-transform: uppercase; font-size: 8pt; letter-spacing: .8px; color: #616e7c; margin-bottom: 3px; }
+
+  table.lines { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .lines th { text-align: left; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .5px; color: #616e7c;
+              border-bottom: 1px solid #cbd2d9; padding: 6px 4px; }
+  .lines td { border-bottom: 1px solid #e4e7eb; padding: 6px 4px; vertical-align: top; }
+  .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  tr { page-break-inside: avoid; }
+
+  .bottom { display: flex; justify-content: space-between; gap: 10mm; margin-top: 12px; }
+  .payments { flex: 1; }
+  .payments table { width: 100%; border-collapse: collapse; }
+  .payments td { padding: 3px 4px; border-bottom: 1px solid #e4e7eb; }
+  table.totals { width: 72mm; border-collapse: collapse; }
+  .totals td { padding: 3px 4px; }
+  .totals .grand td { border-top: 2px solid #1f2933; font-weight: 700; font-size: 11.5pt; padding-top: 6px; }
+  .totals .balance td { font-weight: 700; color: #1f6feb; }
+
+  .status { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 8.5pt; font-weight: 600;
+            background: #e4e7eb; color: #3e4c59; }
+  .status.PAID { background: #e3f9e5; color: #0f7a28; }
+  .status.CANCELLED { background: #f5f7fa; color: #9aa5b1; }
+  .status.OVERDUE { background: #fde8e8; color: #c53030; }
+  /* sits in the empty space between the company block and the invoice title */
+  .stamp { position: absolute; top: 12mm; left: 56%; transform: translateX(-30%) rotate(-12deg); border: 3px solid #d64545; color: #d64545;
+           padding: 4px 14px; font-size: 22pt; font-weight: 800; letter-spacing: 3px; opacity: .8; border-radius: 4px; }
+  footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #e4e7eb; }
+  .hint { margin: 0 auto 8px; max-width: 182mm; font-size: 9pt; color: #616e7c; text-align: right; }
+</style>
+</head>
+<body>
+<p class="hint screen-only">Press Ctrl+P (⌘P on Mac) and choose “Save as PDF”.</p>
+<div class="page">
+  {{{overdueStamp}}}
+  <header>
+    <div>
+      <div class="brand">{{companyName}}</div>
+      <div class="muted small">{{companyAddress}}</div>
+      <div class="muted small">GSTIN {{companyGstin}} · {{companyEmail}}</div>
+    </div>
+    <div>
+      <h1>INVOICE</h1>
+      <table class="meta small">
+        <tr><td>Invoice</td><td><strong>{{number}}</strong></td></tr>
+        <tr><td>Invoice date</td><td>{{invoiceDate}}</td></tr>
+        <tr><td>Due date</td><td>{{dueDate}}</td></tr>
+        <tr><td>Status</td><td><span class="status {{status}}">{{statusLabel}}</span></td></tr>
+      </table>
+    </div>
+  </header>
+
+  <section class="parties">
+    <div>
+      <div class="label">Bill to</div>
+      <strong>{{billToName}}</strong><br>
+      {{billToEmail}}<br>
+      {{billToAddress}}
+    </div>
+    <div>
+      <div class="label">Subscription</div>
+      {{subscriptionNumber}}<br>
+      Service period {{servicePeriod}}
+    </div>
+  </section>
+
+  <table class="lines">
+    <thead>
+      <tr><th>Description</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th>
+          <th class="num">Discount</th><th class="num">Tax</th><th class="num">Total</th></tr>
+    </thead>
+    <tbody>
+      {{{lineRows}}}
+    </tbody>
+  </table>
+
+  <div class="bottom">
+    <div class="payments">
+      <div class="label">Payments received</div>
+      {{{paymentsBlock}}}
+    </div>
+    <table class="totals">
+      <tr><td>Subtotal</td><td class="num">{{subtotal}}</td></tr>
+      <tr><td>Discount</td><td class="num">− {{discountTotal}}</td></tr>
+      <tr><td>Tax</td><td class="num">{{taxTotal}}</td></tr>
+      <tr class="grand"><td>Total</td><td class="num">{{total}}</td></tr>
+      <tr><td>Paid</td><td class="num">{{amountPaid}}</td></tr>
+      <tr class="balance"><td>Balance due</td><td class="num">{{balanceDue}}</td></tr>
+    </table>
+  </div>
+
+  <footer class="muted small">
+    Payment is due by {{dueDate}}. Please quote {{number}} with your payment. All amounts in Indian Rupees (INR).
+  </footer>
+</div>
+</body>
+</html>

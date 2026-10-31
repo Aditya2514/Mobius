@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "cross-env TZ=UTC tsx watch src/server.ts",
-    "build": "tsc -p .",
+    "build": "tsc -p . && node -e \"require('fs').copyFileSync('src/modules/billing/invoice.template.html','dist/modules/billing/invoice.template.html')\"",
     "start": "cross-env TZ=UTC node dist/server.js",
     "db:migrate": "prisma migrate deploy",
     "db:pull": "prisma db pull && prisma generate",
@@ -34,6 +34,7 @@
     "nodemailer": "^10.3.1",
     "pino": "^10.4.0",
     "pino-http": "^11.0.0",
+    "puppeteer": "^25.16.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -58,6 +59,7 @@
     "@prisma/client@6.19.3": true,
     "@prisma/engines@6.19.3": true,
     "bcrypt@6.0.0": true,
-    "esbuild@0.28.2": true
+    "esbuild@0.28.2": true,
+    "puppeteer@25.16.0": true
   }
 }

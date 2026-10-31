@@ -22,3 +22,17 @@ export async function bulkConfirm(req: Request, res: Response) {
 export async function cancel(req: Request, res: Response) {
   res.json(serialize(await svc.cancelInvoice(BigInt(req.params.id), req.user!)));
 }
+
+export async function print(req: Request, res: Response) {
+  res.type('html').send(await svc.invoiceHtml(BigInt(req.params.id), req.user!));
+}
+
+export async function pdf(req: Request, res: Response) {
+  const { number, pdf } = await svc.invoicePdf(BigInt(req.params.id), req.user!);
+  res.type('application/pdf').setHeader('Content-Disposition', `inline; filename="${number}.pdf"`);
+  res.send(pdf);
+}
+
+export async function send(req: Request, res: Response) {
+  res.json(serialize(await svc.sendInvoice(BigInt(req.params.id), req.user!)));
+}
