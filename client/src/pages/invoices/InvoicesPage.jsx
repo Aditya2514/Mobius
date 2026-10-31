@@ -73,11 +73,11 @@ export default function InvoicesPage() {
       headerName: 'Customer',
       flex: 1.2,
       renderCell: (p) => (
-        <Box>
-          <Typography variant="body2" fontWeight={600}>
+        <Box sx={{ minWidth: 0, lineHeight: 1.3 }}>
+          <Typography variant="body2" fontWeight={600} noWrap>
             {p.value?.name || p.row.billToName || '—'}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" color="text.secondary" noWrap display="block">
             {p.value?.email || p.row.billToEmail}
           </Typography>
         </Box>

@@ -36,10 +36,11 @@ export default function PaymentsPage() {
       ),
     },
     {
-      field: 'customerName',
-      headerName: 'Customer',
+      field: 'recordedBy',
+      headerName: 'Recorded By',
       flex: 1.2,
-      renderCell: (p) => p.value || 'Client Settlement',
+      sortable: false,
+      renderCell: (p) => p.value?.name || '—',
     },
     {
       field: 'method',
@@ -57,7 +58,7 @@ export default function PaymentsPage() {
       headerAlign: 'right',
       renderCell: (p) => (
         <Typography variant="body2" fontWeight={700} color="success.dark">
-          +<Money value={p.value} />
+          <Money sign="+" hideZeroSign value={p.value} />
         </Typography>
       ),
     },

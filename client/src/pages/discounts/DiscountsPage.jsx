@@ -8,7 +8,7 @@ import { useAuth } from '../../auth/AuthContext';
 import DataTable from '../../components/DataTable';
 import PageHeader from '../../components/PageHeader';
 import { useListParams } from '../../hooks/useListParams';
-import { formatDate } from '../../utils/format';
+import { formatDate, formatMoney } from '../../utils/format';
 
 export default function DiscountsPage() {
   const [params, setParams] = useListParams({ page: 1, pageSize: 25 });
@@ -39,7 +39,7 @@ export default function DiscountsPage() {
       renderCell: (p) => (
         <Chip
           size="small"
-          label={p.row.type === 'PERCENTAGE' ? `${p.value}% OFF` : `₹${p.value} OFF`}
+          label={p.row.type === 'PERCENTAGE' ? `${p.value}% OFF` : `${formatMoney(p.value)} OFF`}
           color="secondary"
           variant="filled"
           sx={{ fontWeight: 600 }}

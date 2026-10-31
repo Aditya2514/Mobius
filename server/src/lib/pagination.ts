@@ -6,7 +6,7 @@ export const MAX_PAGE_SIZE = 100;
 
 /** Merge this into every list endpoint's query schema. */
 export const paginationQuery = z.object({
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
   pageSize: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
   sort: z.string().optional(),
 });

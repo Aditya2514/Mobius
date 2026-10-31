@@ -37,7 +37,7 @@ import Money from '../../components/Money';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import LoadingBlock from '../../components/LoadingBlock';
 import ErrorState from '../../components/ErrorState';
-import { formatDate, formatDateTime } from '../../utils/format';
+import { formatDate, formatDateTime, formatMoney } from '../../utils/format';
 
 const STEPS = ['DRAFT', 'QUOTATION', 'CONFIRMED', 'ACTIVE', 'CLOSED'];
 
@@ -304,7 +304,7 @@ export default function SubscriptionDetailPage() {
                   >
                     {(products?.data || []).map((p) => (
                       <MenuItem key={p.id} value={p.id}>
-                        {p.name} (₹{p.salesPrice})
+                        {p.name} ({formatMoney(p.salesPrice)})
                       </MenuItem>
                     ))}
                   </TextField>
@@ -321,7 +321,7 @@ export default function SubscriptionDetailPage() {
                     <MenuItem value="">None</MenuItem>
                     {availableVariants.map((v) => (
                       <MenuItem key={v.id} value={v.id}>
-                        {v.attribute}: {v.value} (+₹{v.extraPrice})
+                        {v.attribute}: {v.value} (+{formatMoney(v.extraPrice)})
                       </MenuItem>
                     ))}
                   </TextField>
@@ -428,7 +428,7 @@ export default function SubscriptionDetailPage() {
                   </Grid>
                   <Grid item xs={6} textAlign="right">
                     <Typography variant="body2" color="secondary.main" fontWeight={600}>
-                      -<Money value={sub.preview?.discountTotal || '0.00'} />
+                      <Money sign="-" hideZeroSign value={sub.preview?.discountTotal || '0.00'} />
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
@@ -438,7 +438,7 @@ export default function SubscriptionDetailPage() {
                   </Grid>
                   <Grid item xs={6} textAlign="right">
                     <Typography variant="body2" fontWeight={600}>
-                      +<Money value={sub.preview?.taxTotal || '0.00'} />
+                      <Money sign="+" hideZeroSign value={sub.preview?.taxTotal || '0.00'} />
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>

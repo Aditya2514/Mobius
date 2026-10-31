@@ -18,11 +18,16 @@ export default function StatCard({ title, value, subtitle, icon, color = 'primar
     >
       <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography variant="body2" color="text.secondary" fontWeight={500} gutterBottom>
               {title}
             </Typography>
-            <Typography variant="h5" fontWeight={700} sx={{ fontVariantNumeric: 'tabular-nums' }}>
+            <Typography
+              variant="h5"
+              fontWeight={700}
+              noWrap
+              sx={{ fontVariantNumeric: 'tabular-nums', fontSize: { xs: '1.5rem', md: '1.25rem', lg: '1.5rem' } }}
+            >
               {value}
             </Typography>
             {subtitle && (

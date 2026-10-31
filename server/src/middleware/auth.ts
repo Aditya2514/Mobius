@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
 import { AppError } from '../lib/errors';
+import { prisma } from '../lib/prisma';
 
 export type Role = 'ADMIN' | 'STAFF' | 'CUSTOMER';
 export type AuthUser = { id: string; role: Role };
@@ -15,15 +16,24 @@ declare global {
 }
 
 /** Verify the access JWT from "Authorization: Bearer <token>" and set req.user = { id, role }. */
-export function auth(req: Request, _res: Response, next: NextFunction) {
+export async function auth(req: Request, _res: Response, next: NextFunction) {
   const h = req.headers.authorization;
   if (!h?.startsWith('Bearer ')) return next(new AppError(401, 'UNAUTHENTICATED', 'Login required'));
+  let p: { sub: string };
   try {
-    const p = jwt.verify(h.slice(7), env.JWT_ACCESS_SECRET) as { sub: string; role: Role };
-    req.user = { id: p.sub, role: p.role };
-    next();
+    p = jwt.verify(h.slice(7), env.JWT_ACCESS_SECRET) as { sub: string };
+    BigInt(p.sub);
   } catch {
-    next(new AppError(401, 'UNAUTHENTICATED', 'Session expired'));
+    return next(new AppError(401, 'UNAUTHENTICATED', 'Session expired'));
+  }
+  try {
+    // live check: deactivated or re-roled users lose access immediately, not at token expiry
+    const u = await prisma.users.findUnique({ where: { id: BigInt(p.sub) }, select: { is_active: true, role: true } });
+    if (!u || !u.is_active) return next(new AppError(401, 'UNAUTHENTICATED', 'Session expired'));
+    req.user = { id: p.sub, role: u.role as Role };
+    next();
+  } catch (e) {
+    next(e);
   }
 }
 

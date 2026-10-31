@@ -24,6 +24,7 @@ import { useSnackbar } from 'notistack';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { formatMoney } from '../../utils/format';
 import { api, toApiError } from '../../api/client';
 import PageHeader from '../../components/PageHeader';
 import LoadingBlock from '../../components/LoadingBlock';
@@ -323,7 +324,7 @@ export default function ProductFormPage() {
                       <TableRow key={idx}>
                         <TableCell>{v.attribute}</TableCell>
                         <TableCell sx={{ fontWeight: 500 }}>{v.value}</TableCell>
-                        <TableCell align="right">+{Number(v.extraPrice).toFixed(2)}</TableCell>
+                        <TableCell align="right">+{formatMoney(v.extraPrice)}</TableCell>
                         <TableCell align="right">
                           <IconButton
                             size="small"

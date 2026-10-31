@@ -26,6 +26,7 @@ import {
 import { api } from '../../api/client';
 import StatCard from '../../components/StatCard';
 import PageHeader from '../../components/PageHeader';
+import { formatMoney, formatMoneyCompact, formatNumber } from '../../utils/format';
 import Money from '../../components/Money';
 import LoadingBlock from '../../components/LoadingBlock';
 import ErrorState from '../../components/ErrorState';
@@ -88,7 +89,7 @@ export default function DashboardPage() {
         <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
             title="Active Subscriptions"
-            value={summary?.activeSubscriptions?.toLocaleString() ?? '—'}
+            value={formatNumber(summary?.activeSubscriptions)}
             subtitle="Across all recurring plans"
             icon={<SubscriptionsOutlinedIcon />}
             color="#4f46e5"
@@ -98,7 +99,7 @@ export default function DashboardPage() {
         <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
             title="Monthly Revenue"
-            value={<Money value={summary?.revenueThisMonth} />}
+            value={<Money compact value={summary?.revenueThisMonth} />}
             subtitle="Cash collected this month"
             icon={<AccountBalanceWalletOutlinedIcon />}
             color="#16a34a"
@@ -108,7 +109,7 @@ export default function DashboardPage() {
         <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
             title="Total Outstanding"
-            value={<Money value={summary?.outstanding} />}
+            value={<Money compact value={summary?.outstanding} />}
             subtitle="Confirmed unpaid invoices"
             icon={<PendingActionsOutlinedIcon />}
             color="#0284c7"
@@ -118,8 +119,8 @@ export default function DashboardPage() {
         <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
             title="Overdue Balance"
-            value={<Money value={summary?.overdueAmount} />}
-            subtitle={`${summary?.overdueCount ?? 0} invoices past due`}
+            value={<Money compact value={summary?.overdueAmount} />}
+            subtitle={`${formatNumber(summary?.overdueCount ?? 0)} invoices past due`}
             icon={<WarningAmberOutlinedIcon />}
             color="#dc2626"
             onClick={() => navigate('/app/invoices?overdue=true')}
@@ -128,7 +129,7 @@ export default function DashboardPage() {
         <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
             title="Normalized MRR"
-            value={<Money value={summary?.mrr} />}
+            value={<Money compact value={summary?.mrr} />}
             subtitle="Monthly recurring revenue"
             icon={<TrendingUpOutlinedIcon />}
             color="#7c3aed"
@@ -157,11 +158,11 @@ export default function DashboardPage() {
                       stroke="#64748b"
                       fontSize={12}
                       tickLine={false}
-                      tickFormatter={(val) => `₹${(val / 100000).toFixed(1)}L`}
+                      tickFormatter={(val) => formatMoneyCompact(val, 1)}
                     />
                     <Tooltip
                       formatter={(val) => [
-                        new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val),
+                        formatMoney(val),
                         'Revenue',
                       ]}
                     />
@@ -199,7 +200,9 @@ export default function DashboardPage() {
                   {(subsByPlan || []).map((row) => (
                     <TableRow key={row.planId} hover>
                       <TableCell sx={{ fontWeight: 500 }}>{row.planName}</TableCell>
-                      <TableCell align="right">{row.active}</TableCell>
+                      <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {formatNumber(row.active)}
+                      </TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>
                         <Money value={row.mrr} />
                       </TableCell>
