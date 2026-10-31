@@ -61,7 +61,7 @@ and update this file in the same commit as the code (and MSW mock) change.
 | PATCH / DELETE | /subscriptions/:id/lines/:lineId | Admin, Staff | DRAFT or QUOTATION only; both return the subscription detail (fresh preview). PATCH keeps the agreed unitPrice unless a new one is sent or the variant changes |
 | POST | /subscriptions/:id/transition | Scoped | { action } → updated subscription detail. Not allowed from this status → 400 INVALID\_TRANSITION with details.allowed; plan forbids it → 400 BUSINESS\_RULE; customer calling a staff action → 403 |
 | GET | /subscriptions/:id/history | Admin, Staff | Paginated, oldest first: [{ id, fromStatus, toStatus, changedBy: { id, name } \| null, changedAt }]; changedBy null = billing job |
-| POST | /subscriptions/:id/invoice | Admin, Staff | Bill this subscription now |
+| POST | /subscriptions/:id/invoice | Admin, Staff | Bill this subscription now (everything due up to today, same engine, idempotent) → { invoicesCreated }; not ACTIVE → 400 BUSINESS\_RULE |
 | GET / POST | /discounts | Read Admin, Staff; write Admin | { name, type, value, scope, minPurchase, minQuantity, startDate, endDate?, usageLimit?, productIds?, subscriptionIds? } |
 | GET / PATCH | /discounts/:id | Read Admin, Staff; write Admin | Shows usedCount |
 | GET | /invoices | Admin, Staff, Customer (own) | ?status=&overdue=true&customerId=&subscriptionId=&from=&to=&q= |
@@ -73,8 +73,8 @@ and update this file in the same commit as the code (and MSW mock) change.
 | GET | /invoices/:id/pdf | Scoped | application/pdf |
 | POST | /invoices/:id/payments | Admin, Staff | { method, amount, paidOn, reference?, note? } |
 | GET | /payments | Admin, Staff, Customer (own) | ?method=&from=&to=&invoiceId= |
-| POST | /billing/run | Admin | { date? } → { invoicesCreated, closed, errors } |
-| GET | /billing/runs | Admin | Run log |
+| POST | /billing/run | Admin | { date? } (default today, India date; a future date → 400) → { invoicesCreated, closed, errors: [{ subscriptionId, message }] } |
+| GET | /billing/runs | Admin | Paginated, newest first: [{ id, runDate, startedAt, finishedAt, invoicesCreated, subscriptionsClosed, errors, triggeredBy: { id, name } \| null }]; triggeredBy null = scheduler |
 | GET | /reports/summary | Admin, Staff | Dashboard cards |
 | GET | /reports/revenue | Admin, Staff | ?from=&to= → \[{ month, amount }\] |
 | GET | /reports/overdue | Admin, Staff | Paginated overdue invoices + daysOverdue |

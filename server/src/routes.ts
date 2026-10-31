@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authRoutes from './modules/auth/auth.routes';
+import billingRoutes from './modules/billing/billing.routes';
 import invoiceRoutes from './modules/billing/invoice.routes';
 import productRoutes from './modules/catalog/products.routes';
 import taxRoutes from './modules/catalog/taxes.routes';
@@ -29,3 +30,4 @@ routes.use(templateRoutes);
 routes.use(subscriptionRoutes);
 routes.use(discountRoutes);
 routes.use(invoiceRoutes);
+routes.use(billingRoutes);

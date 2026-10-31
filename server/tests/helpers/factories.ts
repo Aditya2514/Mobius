@@ -102,16 +102,36 @@ export function makeDiscount(
   });
 }
 
-export async function makeActiveSub(customerId: bigint, over: { startDate?: string; nextBillingDate?: string } = {}) {
-  const plan = await makePlan();
+type SubOver = {
+  planId?: bigint;
+  startDate?: string;
+  nextBillingDate?: string;
+  expiryDate?: string;
+  status?: 'ACTIVE' | 'PAUSED';
+  paymentTermsDays?: number;
+  lines?: { productId: bigint; variantId?: bigint; quantity: number; unitPrice: string; taxId?: bigint }[];
+};
+
+/** An ACTIVE subscription as activation leaves it: next billing date and anchor = start date. */
+export async function makeActiveSub(customerId: bigint, over: SubOver = {}) {
+  const planId = over.planId ?? (await makePlan()).id;
   const start = new Date(over.startDate ?? '2026-11-01');
   return prisma.subscriptions.create({
     data: {
       customer_id: customerId,
-      plan_id: plan.id,
-      status: 'ACTIVE',
+      plan_id: planId,
+      status: over.status ?? 'ACTIVE',
       start_date: start,
+      billing_anchor: start,
       next_billing_date: new Date(over.nextBillingDate ?? start.toISOString().slice(0, 10)),
+      expiry_date: over.expiryDate ? new Date(over.expiryDate) : null,
+      payment_terms_days: over.paymentTermsDays ?? 15,
+      subscription_lines: {
+        create: (over.lines ?? []).map((l) => ({
+          product_id: l.productId, variant_id: l.variantId ?? null, quantity: l.quantity,
+          unit_price: l.unitPrice, tax_id: l.taxId ?? null,
+        })),
+      },
     },
   });
 }

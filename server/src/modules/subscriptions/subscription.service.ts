@@ -370,12 +370,12 @@ export async function deleteLine(id: bigint, lineId: bigint, user: AuthUser) {
 export async function transition(id: bigint, action: Action, user: AuthUser) {
   return prisma.$transaction(async (tx) => {
     const s = await lockSubscription(tx, id, user);
-    const to = nextStatus(s.status, action);
-    const plan = s.plans;
-
+    // role first: a customer never sees the staff-only actions listed by nextStatus()
     if (user.role === 'CUSTOMER' && !CUSTOMER_ACTIONS.includes(action)) {
       throw new AppError(403, 'FORBIDDEN', 'Customers can only pause, resume or close their subscription');
     }
+    const to = nextStatus(s.status, action);
+    const plan = s.plans;
     const rule = (message: string) => new AppError(400, 'BUSINESS_RULE', message, { action });
     if (action === 'pause' && !plan.is_pausable) throw rule('This plan cannot be paused');
     if (action === 'close' && !plan.is_closable) throw rule('This plan cannot be closed early');
@@ -402,14 +402,17 @@ export async function transition(id: bigint, action: Action, user: AuthUser) {
         break;
       case 'activate':
         data.next_billing_date = s.start_date; // billed in advance from the start date
+        data.billing_anchor = s.start_date; // periods count from here (shifted by pauses)
         break;
       case 'pause':
         data.paused_at = today;
         break;
       case 'resume': {
-        // not billed while paused: push the next billing date forward by the days paused
+        // not billed while paused: shift the next billing date AND the period anchor by the days paused,
+        // so later periods restart from the shifted date (paused 10–20 Jan → periods run 11th to 11th)
         const pausedDays = s.paused_at ? Math.max(0, differenceInCalendarDays(today, s.paused_at)) : 0;
         if (s.next_billing_date) data.next_billing_date = addDays(s.next_billing_date, pausedDays);
+        data.billing_anchor = addDays(s.billing_anchor ?? s.start_date, pausedDays);
         data.paused_at = null;
         break;
       }

@@ -10,7 +10,7 @@ const camel = (k: string) => k.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpp
 const DATE_COLUMNS = [
   'start_date', 'end_date', 'expiry_date', 'quotation_valid_until', 'next_billing_date', 'paused_at',
   'period_start', 'period_end', 'invoice_date', 'due_date', 'paid_on',
-  'available_from', 'available_to', 'run_date',
+  'available_from', 'available_to', 'run_date', 'billing_anchor',
 ];
 // match both the column name and its camelCase form (services may build camelCase objects)
 const DATE_ONLY = new Set([...DATE_COLUMNS, ...DATE_COLUMNS.map(camel)]);

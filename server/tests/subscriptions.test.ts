@@ -238,6 +238,10 @@ describe('customers', () => {
 
     const renew = await act(s.id, 'renew', ctx.acmeToken);
     expect(renew.status).toBe(403);
+    // a staff-only action that isn't even valid from ACTIVE is still 403, not a 400 listing staff actions
+    const activate = await act(s.id, 'activate', ctx.acmeToken);
+    expect(activate.status).toBe(403);
+    expect(activate.body.error.details).toBeUndefined();
     // and they can't create or edit subscriptions at all
     expect((await create({ customerId: ctx.acme.id.toString(), planId: ctx.plan.id.toString(), startDate: '2026-11-01' }, ctx.acmeToken)).status).toBe(403);
   });

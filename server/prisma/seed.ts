@@ -182,7 +182,7 @@ async function seedSmall() {
     await prisma.subscriptions.create({
       data: {
         customer_id: s.customer.id, plan_id: s.planId, status: 'ACTIVE', start_date: start,
-        next_billing_date: start, payment_terms_days: 15, created_by: staff.id,
+        next_billing_date: start, billing_anchor: start, payment_terms_days: 15, created_by: staff.id,
         subscription_lines: { create: s.lines },
         subscription_status_history: { create: [{ from_status: null, to_status: 'ACTIVE', changed_by: staff.id }] },
       },
