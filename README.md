@@ -1,5 +1,7 @@
 # Mobius
 
+[![Server CI](https://github.com/Aditya2514/Mobius/actions/workflows/server-ci.yml/badge.svg)](https://github.com/Aditya2514/Mobius/actions/workflows/server-ci.yml)
+
 Subscription Management System for Brightloop Software: products, plans, quotations, subscriptions, automatic invoicing, payments and revenue reports, with Admin, Staff and Customer roles.
 
 - `server/` — Node 20 + TypeScript + Express + Prisma + PostgreSQL (backend)
