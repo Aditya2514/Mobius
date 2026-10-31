@@ -17,7 +17,9 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:big": "cross-env SEED_SIZE=big tsx prisma/seed.ts",
     "test": "cross-env TZ=UTC vitest run",
-    "test:watch": "cross-env TZ=UTC vitest"
+    "test:watch": "cross-env TZ=UTC vitest",
+    "demo:reset": "cross-env SEED_SIZE=big tsx scripts/demo-reset.ts",
+    "demo:check": "tsx scripts/demo-check.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
