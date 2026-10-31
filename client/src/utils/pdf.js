@@ -1,5 +1,14 @@
 import { api } from '../api/client';
 
+/** Escape text before it goes into the print document (names, references, etc. are user-supplied). */
+const esc = (v) =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 /**
  * Exports or prints that specific invoice as a standalone formal document.
  * Tries the server GET /invoices/:id/pdf first.
@@ -44,9 +53,9 @@ export function printStandaloneInvoice(invoice) {
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">${i + 1}</td>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
-          <strong>${line.description || 'Service'}</strong>
+          <strong>${esc(line.description || 'Service')}</strong>
         </td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">${line.quantity}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">${esc(line.quantity)}</td>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right;">${inr(line.unitPrice)}</td>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #7c3aed;">
           ${Number(line.discountAmount) > 0 ? `-${inr(line.discountAmount)}` : '—'}
@@ -80,9 +89,9 @@ export function printStandaloneInvoice(invoice) {
               .map(
                 (p) => `
               <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${p.paidOn}</td>
-                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${p.method}</td>
-                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${p.reference || '—'}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${esc(p.paidOn)}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${esc(p.method)}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${esc(p.reference || '—')}</td>
                 <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #16a34a;">${inr(p.amount)}</td>
               </tr>
             `
@@ -99,7 +108,7 @@ export function printStandaloneInvoice(invoice) {
     <html>
       <head>
         <meta charset="utf-8">
-        <title>${invoice.number} - Tax Invoice</title>
+        <title>${esc(invoice.number)} - Tax Invoice</title>
         <style>
           @page { size: A4; margin: 15mm; }
           body {
@@ -153,35 +162,35 @@ export function printStandaloneInvoice(invoice) {
           </div>
           <div style="text-align: right;">
             <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">TAX INVOICE</div>
-            <div style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 6px;">${invoice.number}</div>
-            <div class="badge badge-${invoice.isOverdue ? 'OVERDUE' : invoice.status}">${invoice.isOverdue ? 'OVERDUE' : invoice.status}</div>
+            <div style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 6px;">${esc(invoice.number)}</div>
+            <div class="badge badge-${invoice.isOverdue ? 'OVERDUE' : esc(invoice.status)}">${invoice.isOverdue ? 'OVERDUE' : esc(invoice.status)}</div>
           </div>
         </div>
 
         <div class="grid">
           <div class="card">
             <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Billed To</div>
-            <div style="font-weight: 700; font-size: 14px;">${invoice.billTo?.name || 'Customer'}</div>
-            <div style="color: #475569;">${invoice.billTo?.email || ''}</div>
-            ${invoice.billTo?.address ? `<div style="color: #64748b; font-size: 12px; margin-top: 4px;">${invoice.billTo.address}</div>` : ''}
+            <div style="font-weight: 700; font-size: 14px;">${esc(invoice.billTo?.name || 'Customer')}</div>
+            <div style="color: #475569;">${esc(invoice.billTo?.email || '')}</div>
+            ${invoice.billTo?.address ? `<div style="color: #64748b; font-size: 12px; margin-top: 4px;">${esc(invoice.billTo.address)}</div>` : ''}
           </div>
           <div class="card">
             <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Invoice Summary</div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
               <span style="color: #64748b;">Invoice Date:</span>
-              <strong>${invoice.invoiceDate}</strong>
+              <strong>${esc(invoice.invoiceDate)}</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
               <span style="color: #64748b;">Due Date:</span>
-              <strong style="${invoice.isOverdue ? 'color: #dc2626;' : ''}">${invoice.dueDate}</strong>
+              <strong style="${invoice.isOverdue ? 'color: #dc2626;' : ''}">${esc(invoice.dueDate)}</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
               <span style="color: #64748b;">Agreement:</span>
-              <span>${invoice.subscriptionNumber || 'SUB-000042'}</span>
+              <span>${esc(invoice.subscriptionNumber || '')}</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
               <span style="color: #64748b;">Billing Period:</span>
-              <span>${invoice.periodStart || ''} — ${invoice.periodEnd || ''}</span>
+              <span>${esc(invoice.periodStart || '')} — ${esc(invoice.periodEnd || '')}</span>
             </div>
           </div>
         </div>
