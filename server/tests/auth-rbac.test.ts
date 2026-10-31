@@ -134,23 +134,45 @@ describe('sign-up and login', () => {
 });
 
 describe('refresh tokens', () => {
-  it('refresh rotates the cookie; reusing the old one revokes every session', async () => {
-    await makeCustomer({ email: 'rot@acme.test' });
-    const login = await request(app).post(`${api}/auth/login`).send({ email: 'rot@acme.test', password: PASSWORD });
+  /** log in, refresh once; returns the old (now revoked) and the new cookie */
+  async function loginAndRotate(email: string) {
+    await makeCustomer({ email });
+    const login = await request(app).post(`${api}/auth/login`).send({ email, password: PASSWORD });
     const first = rtCookie(login);
-
     const r1 = await request(app).post(`${api}/auth/refresh`).set('Cookie', first);
     expect(r1.status).toBe(200);
-    expect(r1.body.user.email).toBe('rot@acme.test');
+    expect(r1.body.user.email).toBe(email);
     const second = rtCookie(r1);
     expect(second).not.toBe(first);
+    return { first, second };
+  }
 
-    // the old token again = theft signal
+  it('reuse within 30 s (two tabs refreshing at once) → 401, other sessions keep working', async () => {
+    const { first, second } = await loginAndRotate('tabs@acme.test');
+
     const reuse = await request(app).post(`${api}/auth/refresh`).set('Cookie', first);
     expect(reuse.status).toBe(401);
-    // ...which also killed the newest token
-    const afterTheft = await request(app).post(`${api}/auth/refresh`).set('Cookie', second);
-    expect(afterTheft.status).toBe(401);
+    // the newest token was not revoked
+    const next = await request(app).post(`${api}/auth/refresh`).set('Cookie', second);
+    expect(next.status).toBe(200);
+  });
+
+  it('reuse more than 30 s after revocation (likely stolen) → 401 and every session revoked', async () => {
+    const { first, second } = await loginAndRotate('theft@acme.test');
+    const user = await prisma.users.findUniqueOrThrow({ where: { email: 'theft@acme.test' } });
+    // a second session on another device, to prove it is revoked too
+    const other = rtCookie(await request(app).post(`${api}/auth/login`).send({ email: 'theft@acme.test', password: PASSWORD }));
+    // pretend the first token was revoked 31 seconds ago
+    await prisma.refresh_tokens.updateMany({
+      where: { user_id: user.id, revoked_at: { not: null } },
+      data: { revoked_at: new Date(Date.now() - 31_000) },
+    });
+
+    const reuse = await request(app).post(`${api}/auth/refresh`).set('Cookie', first);
+    expect(reuse.status).toBe(401);
+    expect((await request(app).post(`${api}/auth/refresh`).set('Cookie', second)).status).toBe(401);
+    expect((await request(app).post(`${api}/auth/refresh`).set('Cookie', other)).status).toBe(401);
+    expect(await prisma.refresh_tokens.count({ where: { user_id: user.id, revoked_at: null } })).toBe(0);
   });
 
   it('logout revokes the refresh token', async () => {

@@ -78,7 +78,14 @@ async function issueSession(userId: bigint, role: Role, tx: Prisma.TransactionCl
 
 const sessionExpired = () => new AppError(401, 'UNAUTHENTICATED', 'Session expired, please log in again');
 
-/** Rotate: the presented refresh token is revoked and a new pair issued. Reuse of a revoked token revokes everything. */
+/** A revoked token presented again within this window is treated as two tabs refreshing at once, not theft. */
+export const REUSE_GRACE_MS = 30_000;
+
+/**
+ * Rotate: the presented refresh token is revoked and a new pair issued.
+ * Reuse of a token revoked more than 30 s ago ends every session of that user (likely stolen);
+ * reuse within 30 s (two tabs refreshing together) just gets a 401.
+ */
 export async function refresh(rawToken: string | undefined): Promise<Session> {
   if (!rawToken) throw sessionExpired();
   const tokenHash = sha256(rawToken);
@@ -93,7 +100,11 @@ export async function refresh(rawToken: string | undefined): Promise<Session> {
       data: { revoked_at: new Date() },
     });
     if (claimed.count === 0) {
-      // already revoked token presented again = likely stolen: end every session of this user
+      // null here means a concurrent request revoked it between our read and our claim: that's "just now"
+      const revokedAt = row.revoked_at ?? new Date();
+      if (Date.now() - revokedAt.getTime() <= REUSE_GRACE_MS) return { error: sessionExpired() };
+
+      // revoked a while ago and presented again = likely stolen: end every session of this user
       await tx.refresh_tokens.updateMany({
         where: { user_id: row.user_id, revoked_at: null },
         data: { revoked_at: new Date() },

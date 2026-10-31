@@ -16,9 +16,18 @@ and update this file in the same commit as the code (and MSW mock) change.
 | Dates | "YYYY-MM-DD"; timestamps ISO 8601 UTC |
 | Lists | ?page=1&pageSize=25 (max 100)&sort=field or -field → { data, page, pageSize, total } |
 | Errors | { error: { code, message, details? } } |
-| Status codes | 200 OK, 201 created, 204 no body, 400 validation or rule, 401 not logged in, 403 wrong role, 404 not found or not yours, 409 conflict, 429 too many attempts (login, forgot, reset: 5/min per IP) |
+| Status codes | 200 OK, 201 created, 204 no body, 400 validation or rule, 401 not logged in, 403 wrong role, 404 not found or not yours, 409 conflict, 429 too many attempts (login, forgot, reset: AUTH\_RATE\_LIMIT per minute per IP, 5 in production) |
 
-**Error codes:** VALIDATION\_ERROR, INVALID\_CREDENTIALS, EMAIL\_TAKEN, UNAUTHENTICATED, FORBIDDEN, NOT\_FOUND, INVALID\_TRANSITION, BUSINESS\_RULE, CONFLICT, RATE\_LIMITED. Validation errors carry details { field, issues: [{ field, message }] }.
+**Error codes:** VALIDATION\_ERROR, INVALID\_CREDENTIALS, EMAIL\_TAKEN, UNAUTHENTICATED, FORBIDDEN, NOT\_FOUND, INVALID\_TRANSITION, BUSINESS\_RULE, CONFLICT, RATE\_LIMITED.
+
+**Validation error shape (400 VALIDATION\_ERROR from request checks).** `message` and `details.field` are the first problem; `details.fields` lists every problem, with nested paths like `lines.0.quantity`. Errors raised by business rules send only `details.field`.
+
+```js
+{ "error": { "code": "VALIDATION_ERROR", "message": "Needs a special character",
+    "details": { "field": "password",
+                 "fields": [ { "field": "password", "message": "Needs a special character" },
+                             { "field": "fullName", "message": "Full name is required" } ] } } }
+```
 
 **Endpoints**
 

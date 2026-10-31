@@ -16,7 +16,7 @@ function toAppError(err: unknown): AppError {
     const first = err.issues[0];
     return new AppError(400, 'VALIDATION_ERROR', first?.message ?? 'Invalid request', {
       field: first?.path.join('.') || undefined,
-      issues: err.issues.map((i) => ({ field: i.path.join('.'), message: i.message })),
+      fields: err.issues.map((i) => ({ field: i.path.join('.'), message: i.message })),
     });
   }
 

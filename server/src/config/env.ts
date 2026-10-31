@@ -26,6 +26,9 @@ const schema = z.object({
   MAIL_FROM: z.string().default('Billing <billing@brightloop.test>'),
   AUTO_CONFIRM_INVOICES: bool,
   BILLING_CRON: z.string().default('5 0 * * *'),
+  // requests per minute per IP on login, forgot-password and reset-password (each counted separately).
+  // Keep 5 in production; raise for dev and demos where everyone logs in from one laptop.
+  AUTH_RATE_LIMIT: z.coerce.number().int().positive().default(5),
 });
 
 const parsed = schema.safeParse(process.env);
